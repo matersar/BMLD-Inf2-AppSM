@@ -1,9 +1,13 @@
-# BMLD-Inf2-AppV0
+# BMLD-Inf2-AppSM
 
-Das leere Gerüst um eine App aufzubauen.
+## Leistungsnachweis – Informatik 2 (BMLD/ZHAW), FS26
 
-## Autor
+## Streamlit App
 
-Samuel Wehrli (wehs@zhaw.ch)
+## Team
+
+Sarah Matera (matersar@students.zhaw.ch)
+Jelena Radic (radicjel@students.zhaw.ch)
+Jovana Pavlovic (pavlovjov@students.zhaw.ch)
 
 
