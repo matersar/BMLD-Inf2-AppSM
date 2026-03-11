@@ -14,7 +14,7 @@ st.subheader("Autoren")
 st.write("""
 Diese App wurde von folgenden Personen entwickelt:
 - Jelena Radic (radicjel@students.zhaw.ch) 
-- Jovana Pavlovic (pavlovjov@students.zhaw.ch)
+- Jovana Pavlovic (pavlojov@students.zhaw.ch)
 - Sarah Matera (matersar@students.zhaw.ch)
 Diese App ist das leere Gerüst für die App-Entwicklung im Modul Informatik 2 (BMLD/ZHAW)
 
