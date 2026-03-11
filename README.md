@@ -25,6 +25,6 @@ Diese App berechnet die Nährwerte einer Mahlzeit basierend auf eingegebenen Leb
 
 - Sarah Matera (matersar@students.zhaw.ch)
 - Jelena Radic (radicjel@students.zhaw.ch)
-- Jovana Pavlovic (pavlovjov@students.zhaw.ch)
+- Jovana Pavlovic (pavlojov@students.zhaw.ch)
 
 
