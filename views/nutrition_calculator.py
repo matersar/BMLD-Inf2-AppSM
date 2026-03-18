@@ -121,6 +121,7 @@ st.subheader("💾 Mahlzeiten speichern")
 
 if st.button("➕ Mahlzeit speichern", key="save_btn"):
     new_row = {
+        "timestamp": pd.Timestamp.now(),
         "Name": st.session_state.meal_name,
         "Kalorien": round(st.session_state.calories, 0),
         "Protein": round(st.session_state.protein, 1),
