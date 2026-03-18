@@ -2,7 +2,12 @@ import streamlit as st
 import pandas as pd
 import io
 
-from utils import data_manager
+from utils.data_manager import DataManager
+
+data_manager = DataManager(
+    fs_protocol="webdav",
+    fs_root_folder="Informatik_2_App"
+)
 
 st.title("🥗 Nährwert Rechner")
 
@@ -131,7 +136,7 @@ if st.button("➕ Mahlzeit speichern", key="save_btn"):
         [st.session_state["data_df"], pd.DataFrame([new_row])],
         ignore_index=True
     )
-    
+
 data_manager.save_user_data(st.session_state["data_df"], "data.csv")
 
 st.success("Mahlzeit gespeichert!")
@@ -157,6 +162,7 @@ if not st.session_state["data_df"].empty:
     with col1:
         if st.button("Liste leeren"):
             st.session_state["data_df"] = pd.DataFrame()
+            data_manager.save_user_data(st.session_state["data_df"], "data.csv")
             st.rerun()
 
     with col2:
