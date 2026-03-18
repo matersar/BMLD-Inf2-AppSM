@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import io
 
+from utils import data_manager
+
 st.title("🥗 Nährwert Rechner")
 
 st.write("""
@@ -10,8 +12,6 @@ Gib Lebensmittelmengen ein und berechne Kalorien, Protein, Zucker und Fett.
 """)
 
 # Session State vorbereiten
-if "meals" not in st.session_state:
-    st.session_state.meals = []
 
 with st.form("nutrition_form"):
     st.subheader("Lebensmittel eingeben")
@@ -115,26 +115,31 @@ if submitted:
 st.subheader("💾 Mahlzeiten speichern")
 
 if st.button("➕ Mahlzeit speichern", key="save_btn"):
-
-    st.session_state.meals.append({
+    new_row = {
         "Name": st.session_state.meal_name,
-        "Kalorien": round(st.session_state.calories,0),
-        "Protein": round(st.session_state.protein,1),
-        "Fett": round(st.session_state.fat,1),
-        "Kohlenhydrate": round(st.session_state.carbs,1),
-        "Zucker": round(st.session_state.sugar,1),
-        "Ballaststoffe": round(st.session_state.fiber,1),
+        "Kalorien": round(st.session_state.calories, 0),
+        "Protein": round(st.session_state.protein, 1),
+        "Fett": round(st.session_state.fat, 1),
+        "Kohlenhydrate": round(st.session_state.carbs, 1),
+        "Zucker": round(st.session_state.sugar, 1),
+        "Ballaststoffe": round(st.session_state.fiber, 1),
         "Mahlzeit-Typ": st.session_state.meal_type,
         "Ziel": st.session_state.goal
-    })
+    }
 
-    st.success("Mahlzeit gespeichert!")
+    st.session_state["data_df"] = pd.concat(
+        [st.session_state["data_df"], pd.DataFrame([new_row])],
+        ignore_index=True
+    )
+    
+data_manager.save_user_data(st.session_state["data_df"], "data.csv")
 
-if st.session_state.meals:
+st.success("Mahlzeit gespeichert!")
 
+if not st.session_state["data_df"].empty:
     st.subheader("📊 Gespeicherte Mahlzeiten")
 
-    df = pd.DataFrame(st.session_state.meals)
+    df = st.session_state["data_df"]
 
     st.dataframe(df)
 
@@ -151,7 +156,7 @@ if st.session_state.meals:
 
     with col1:
         if st.button("Liste leeren"):
-            st.session_state.meals = []
+            st.session_state["data_df"] = pd.DataFrame()
             st.rerun()
 
     with col2:
@@ -164,8 +169,4 @@ if st.session_state.meals:
             "mahlzeiten.csv",
             "text/csv"
         )
-  # --- CODE UPDATE: save data to data manager ---
-    data_manager = DataManager()
-    data_manager.save_user_data(st.session_state['data_df'], 'data.csv')
-    # --- END OF CODE UPDATE ---
-    from utils.data_manager import DataManager
+  
