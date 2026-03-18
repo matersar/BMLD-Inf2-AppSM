@@ -168,3 +168,4 @@ if st.session_state.meals:
     data_manager = DataManager()
     data_manager.save_user_data(st.session_state['data_df'], 'data.csv')
     # --- END OF CODE UPDATE ---
+    from utils.data_manager import DataManager
