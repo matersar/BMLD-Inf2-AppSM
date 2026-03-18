@@ -164,3 +164,7 @@ if st.session_state.meals:
             "mahlzeiten.csv",
             "text/csv"
         )
+  # --- CODE UPDATE: save data to data manager ---
+    data_manager = DataManager()
+    data_manager.save_user_data(st.session_state['data_df'], 'data.csv')
+    # --- END OF CODE UPDATE ---
