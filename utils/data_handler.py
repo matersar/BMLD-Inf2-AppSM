@@ -1,3 +1,4 @@
+from email.mime import text
 import json, yaml, posixpath
 import pandas as pd
 from io import StringIO
@@ -116,7 +117,12 @@ class DataHandler:
         elif ext in [".yaml", ".yml"]:
             return yaml.safe_load(self.read_text(relative_path))
         elif ext == ".csv":
-            return pd.read_csv(StringIO(self.read_text(relative_path)), **load_args)       
+            text = self.read_text(relative_path)
+
+            if text.strip() == "":
+                return initial_value
+
+            return pd.read_csv(StringIO(text), **load_args)  
         elif ext == ".txt":
             return self.read_text(relative_path)
         else:
