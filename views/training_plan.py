@@ -15,10 +15,8 @@ level = st.selectbox(
 
 st.subheader("Dein Trainingsplan")
 
-# Trainingsplan je nach Ziel
 if ziel == "Muskelaufbau":
     st.write("Fokus: Krafttraining und Muskelaufbau")
-
     trainingsplan = {
         "Montag: Rücken & Arme": ["Rücken", "Arme"],
         "Dienstag: Pause": [],
@@ -31,7 +29,6 @@ if ziel == "Muskelaufbau":
 
 elif ziel == "Abnehmen":
     st.write("Fokus: Ganzkörpertraining und Kalorienverbrauch")
-
     trainingsplan = {
         "Montag: Beine & Bauch": ["Beine", "Bauch"],
         "Dienstag: Cardio": [],
@@ -44,7 +41,6 @@ elif ziel == "Abnehmen":
 
 else:
     st.write("Fokus: allgemeine Fitness")
-
     trainingsplan = {
         "Montag: Oberkörper": ["Rücken", "Arme"],
         "Dienstag: Pause": [],
@@ -55,7 +51,28 @@ else:
         "Sonntag: Pause": []
     }
 
-# Anzeige
+trainingstage = {
+    tag: muskelgruppen
+    for tag, muskelgruppen in trainingsplan.items()
+    if muskelgruppen
+}
+
+erledigt_count = 0
+
+st.subheader("Fortschritt diese Woche")
+
+for tag in trainingstage:
+    erledigt = st.checkbox(f"{tag} erledigt", key=f"{ziel}_{level}_{tag}")
+    if erledigt:
+        erledigt_count += 1
+
+gesamt = len(trainingstage)
+
+st.progress(erledigt_count / gesamt)
+st.write(f"Du hast **{erledigt_count} von {gesamt} Trainingstagen** geschafft.")
+
+st.divider()
+
 for tag, muskelgruppen in trainingsplan.items():
     st.markdown(f"### {tag}")
 
