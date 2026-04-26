@@ -21,21 +21,41 @@ level = st.selectbox(
 st.subheader("Dein Trainingsplan")
 
 if ziel == "Muskelaufbau":
-    muskelgruppen = ["Beine", "Po", "Rücken", "Arme", "Bauch"]
     st.write("Fokus: Krafttraining und Muskelaufbau")
 
+    trainingsplan = {
+        "Tag 1: Rücken & Arme": ["Rücken", "Arme"],
+        "Tag 2: Beine & Po": ["Beine", "Po"],
+        "Tag 3: Bauch & Ganzkörper": ["Bauch", "Beine", "Rücken"]
+    }
+
 elif ziel == "Abnehmen":
-    muskelgruppen = ["Beine", "Po", "Bauch", "Rücken"]
     st.write("Fokus: Ganzkörpertraining und hoher Kalorienverbrauch")
 
+    trainingsplan = {
+        "Tag 1: Beine & Bauch": ["Beine", "Bauch"],
+        "Tag 2: Rücken & Po": ["Rücken", "Po"],
+        "Tag 3: Ganzkörper": ["Beine", "Rücken", "Bauch", "Po"]
+    }
+
 else:
-    muskelgruppen = ["Beine", "Rücken", "Arme", "Bauch"]
     st.write("Fokus: allgemeine Fitness und regelmäßige Bewegung")
 
-gefilterte_uebungen = [
-    exercise for exercise in EXERCISES
-    if exercise["muskelgruppe"] in muskelgruppen and exercise["level"] == level
-]
+    trainingsplan = {
+        "Tag 1: Oberkörper": ["Rücken", "Arme"],
+        "Tag 2: Unterkörper": ["Beine", "Po"],
+        "Tag 3: Core & Ausdauer": ["Bauch", "Beine"]
+    }
 
-for exercise in gefilterte_uebungen[:8]:
-    st.markdown(f"- **{exercise['name']}** ({exercise['muskelgruppe']})")
+
+for tag, muskelgruppen in trainingsplan.items():
+    st.markdown(f"### {tag}")
+
+    passende_uebungen = [
+        exercise for exercise in EXERCISES
+        if exercise["muskelgruppe"] in muskelgruppen
+        and exercise["level"] == level
+    ]
+
+    for exercise in passende_uebungen[:5]:
+        st.markdown(f"- **{exercise['name']}** ({exercise['muskelgruppe']})")
