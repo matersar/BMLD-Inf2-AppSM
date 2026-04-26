@@ -48,10 +48,18 @@ pg_nutrition = st.Page(
     icon=":material/restaurant:"
 )
 
+# TRAININGSPLAN
+pg_training = st.Page(
+    "views/training_plan.py",
+    title="Trainingsplan",
+    icon=":material/fitness_center:"
+)
+
 # Navigation
 pg = st.navigation([
     pg_home,
-    pg_nutrition
+    pg_nutrition,
+    pg_training
 ])
 
 pg.run()
