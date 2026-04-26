@@ -15,32 +15,53 @@ level = st.selectbox(
 
 st.subheader("Dein Trainingsplan")
 
+# Trainingsplan je nach Ziel
 if ziel == "Muskelaufbau":
     st.write("Fokus: Krafttraining und Muskelaufbau")
+
     trainingsplan = {
-        "Tag 1: Rücken & Arme": ["Rücken", "Arme"],
-        "Tag 2: Beine & Po": ["Beine", "Po"],
-        "Tag 3: Bauch & Ganzkörper": ["Bauch", "Beine", "Rücken"]
+        "Montag: Rücken & Arme": ["Rücken", "Arme"],
+        "Dienstag: Pause": [],
+        "Mittwoch: Beine & Po": ["Beine", "Po"],
+        "Donnerstag: Pause": [],
+        "Freitag: Bauch & Ganzkörper": ["Bauch", "Beine", "Rücken"],
+        "Samstag: Optional Cardio": [],
+        "Sonntag: Pause": []
     }
 
 elif ziel == "Abnehmen":
-    st.write("Fokus: Ganzkörpertraining und hoher Kalorienverbrauch")
+    st.write("Fokus: Ganzkörpertraining und Kalorienverbrauch")
+
     trainingsplan = {
-        "Tag 1: Beine & Bauch": ["Beine", "Bauch"],
-        "Tag 2: Rücken & Po": ["Rücken", "Po"],
-        "Tag 3: Ganzkörper": ["Beine", "Rücken", "Bauch", "Po"]
+        "Montag: Beine & Bauch": ["Beine", "Bauch"],
+        "Dienstag: Cardio": [],
+        "Mittwoch: Rücken & Po": ["Rücken", "Po"],
+        "Donnerstag: Pause": [],
+        "Freitag: Ganzkörper": ["Beine", "Rücken", "Bauch", "Po"],
+        "Samstag: Cardio": [],
+        "Sonntag: Pause": []
     }
 
 else:
     st.write("Fokus: allgemeine Fitness")
+
     trainingsplan = {
-        "Tag 1: Oberkörper": ["Rücken", "Arme"],
-        "Tag 2: Unterkörper": ["Beine", "Po"],
-        "Tag 3: Core": ["Bauch", "Beine"]
+        "Montag: Oberkörper": ["Rücken", "Arme"],
+        "Dienstag: Pause": [],
+        "Mittwoch: Unterkörper": ["Beine", "Po"],
+        "Donnerstag: Mobility": [],
+        "Freitag: Core": ["Bauch", "Beine"],
+        "Samstag: Optional Bewegung": [],
+        "Sonntag: Pause": []
     }
 
+# Anzeige
 for tag, muskelgruppen in trainingsplan.items():
     st.markdown(f"### {tag}")
+
+    if not muskelgruppen:
+        st.write("Ruhetag / Erholung")
+        continue
 
     passende_uebungen = [
         ex for ex in EXERCISES
