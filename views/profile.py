@@ -60,12 +60,16 @@ with st.form("profile_form"):
         value=default_age
     )
 
-    gender = st.selectbox(
-        "Geschlecht",
-        ["Weiblich", "Männlich", "Divers"],
-        index=["Weiblich", "Männlich", "Divers"].index(default_gender)
-    )
+    gender_options = ["Weiblich", "Männlich"]
 
+if default_gender not in gender_options:
+    default_gender = "Weiblich"
+
+    gender = st.selectbox(
+    "Geschlecht",
+    gender_options,
+    index=gender_options.index(default_gender)
+)
     height = st.number_input(
         "Größe (cm)",
         min_value=100.0,
