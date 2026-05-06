@@ -1,4 +1,4 @@
- import streamlit as st
+import streamlit as st
 import pandas as pd
 from utils.data_manager import DataManager
 from utils.progress_manager import ProgressManager
@@ -14,19 +14,9 @@ progress_manager = ProgressManager()
 
 st.write("Willkommen zurück! Hier siehst du deine wichtigsten Fitness- und Ernährungsdaten auf einen Blick.")
 
-# Profil laden
-profile_df = data_manager.load_user_data(
-    "profile.csv",
-    initial_value=pd.DataFrame()
-)
+profile_df = data_manager.load_user_data("profile.csv", initial_value=pd.DataFrame())
+nutrition_df = data_manager.load_user_data("data.csv", initial_value=pd.DataFrame())
 
-# Ernährung laden
-nutrition_df = data_manager.load_user_data(
-    "data.csv",
-    initial_value=pd.DataFrame()
-)
-
-# Fortschritt laden
 try:
     progress_df = progress_manager.load_progress()
 except Exception:
@@ -36,7 +26,6 @@ except Exception:
 
 st.divider()
 
-# Profilübersicht
 st.subheader("👤 Profilübersicht")
 
 if not profile_df.empty:
@@ -51,8 +40,9 @@ if not profile_df.empty:
 
     bmi = gewicht / ((groesse / 100) ** 2)
 
-    col1, col2, col3 = st.columns(3)
+    st.write(f"Hallo **{name}** 👋")
 
+    col1, col2, col3 = st.columns(3)
     col1.metric("🎯 Ziel", ziel)
     col2.metric("🏋️ Level", level)
     col3.metric("📅 Trainingstage", f"{trainingstage}/Woche")
@@ -69,13 +59,11 @@ if not profile_df.empty:
         st.info("BMI-Bewertung: Übergewicht")
     else:
         st.warning("BMI-Bewertung: starkes Übergewicht")
-
 else:
     st.info("Noch kein Profil gespeichert. Bitte zuerst unter „Mein Profil“ ausfüllen.")
 
 st.divider()
 
-# Trainingsfortschritt
 st.subheader("🏋️ Trainingsfortschritt")
 
 if not progress_df.empty and "completed" in progress_df.columns:
@@ -84,7 +72,6 @@ if not progress_df.empty and "completed" in progress_df.columns:
     alle_eintraege = len(progress_df)
 
     col1, col2 = st.columns(2)
-
     col1.metric("✅ Erledigte Trainings", erledigte_trainings)
     col2.metric("📌 Gespeicherte Einträge", alle_eintraege)
 
@@ -112,7 +99,6 @@ else:
 
 st.divider()
 
-# Ernährung
 st.subheader("🥗 Ernährungsübersicht")
 
 if not nutrition_df.empty and "Kalorien" in nutrition_df.columns:
@@ -121,7 +107,6 @@ if not nutrition_df.empty and "Kalorien" in nutrition_df.columns:
     avg_protein = nutrition_df["Protein"].mean()
 
     col1, col2, col3 = st.columns(3)
-
     col1.metric("🔥 Gesamt Kalorien", f"{total_kcal:.0f} kcal")
     col2.metric("📊 Ø Kalorien", f"{avg_kcal:.0f} kcal")
     col3.metric("💪 Ø Protein", f"{avg_protein:.1f} g")
@@ -133,13 +118,11 @@ if not nutrition_df.empty and "Kalorien" in nutrition_df.columns:
         f"mit **{letzte_mahlzeit['Kalorien']:.0f} kcal** "
         f"und **{letzte_mahlzeit['Protein']:.1f} g Protein**."
     )
-
 else:
     st.info("Noch keine Mahlzeiten gespeichert.")
 
 st.divider()
 
-# Motivation
 st.subheader("🔥 Motivation")
 
 if not profile_df.empty:
