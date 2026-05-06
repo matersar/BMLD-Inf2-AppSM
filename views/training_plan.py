@@ -14,9 +14,46 @@ data_manager = DataManager(
 
 GOAL_OPTIONS = ["Muskelaufbau", "Abnehmen", "Gesünder & fitter werden"]
 LEVEL_OPTIONS = ["Anfänger", "Mittelstufe", "Fortgeschritten"]
+TRAININGDAY_OPTIONS = [3, 4, 5]
 
-ziel = st.selectbox("Was ist dein Ziel?", GOAL_OPTIONS)
-level = st.selectbox("Was ist dein Fitnesslevel?", LEVEL_OPTIONS)
+# Profil laden und als Standardwerte verwenden
+profile_df = data_manager.load_user_data(
+    "profile.csv",
+    initial_value=pd.DataFrame()
+)
+
+if not profile_df.empty:
+    latest_profile = profile_df.iloc[-1]
+    default_ziel = latest_profile.get("Ziel", "Muskelaufbau")
+    default_level = latest_profile.get("Fitnesslevel", "Anfänger")
+    default_trainingstage = int(latest_profile.get("Trainingstage", 3))
+    st.success("Profil wurde geladen ✅")
+else:
+    default_ziel = "Muskelaufbau"
+    default_level = "Anfänger"
+    default_trainingstage = 3
+    st.info("Noch kein Profil gespeichert. Du kannst trotzdem einen Trainingsplan erstellen.")
+
+if default_ziel not in GOAL_OPTIONS:
+    default_ziel = "Muskelaufbau"
+
+if default_level not in LEVEL_OPTIONS:
+    default_level = "Anfänger"
+
+if default_trainingstage not in TRAININGDAY_OPTIONS:
+    default_trainingstage = 3
+
+ziel = st.selectbox(
+    "Was ist dein Ziel?",
+    GOAL_OPTIONS,
+    index=GOAL_OPTIONS.index(default_ziel)
+)
+
+level = st.selectbox(
+    "Was ist dein Fitnesslevel?",
+    LEVEL_OPTIONS,
+    index=LEVEL_OPTIONS.index(default_level)
+)
 
 if level == "Anfänger":
     st.info("🏁 Anfänger: 0–1 Training pro Woche • Fokus auf Grundlagen und Einstieg")
@@ -25,7 +62,11 @@ elif level == "Mittelstufe":
 else:
     st.info("🔥 Fortgeschritten: 4–6 Trainings pro Woche • Intensives und konstantes Training")
 
-trainingstage_anzahl = st.selectbox("Wie viele Trainingstage pro Woche möchtest du?", [3, 4, 5])
+trainingstage_anzahl = st.selectbox(
+    "Wie viele Trainingstage pro Woche möchtest du?",
+    TRAININGDAY_OPTIONS,
+    index=TRAININGDAY_OPTIONS.index(default_trainingstage)
+)
 
 st.subheader("Dein Trainingsplan")
 
