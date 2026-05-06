@@ -274,7 +274,18 @@ st.divider()
 
 st.subheader("📊 Gespeicherte Trainingsfortschritte")
 
-df = progress_manager.load_progress()
+try:
+    df = progress_manager.load_progress()
+except Exception:
+    st.warning("Trainingsfortschritte konnten gerade nicht geladen werden. Bitte Seite neu laden.")
+    df = pd.DataFrame(columns=[
+        "timestamp",
+        "goal",
+        "level",
+        "training_days",
+        "day_name",
+        "completed"
+    ])
 
 if not df.empty:
     df_display = df.rename(columns={
