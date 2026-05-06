@@ -12,8 +12,19 @@ data_manager = DataManager(
     fs_root_folder="Informatik_2_App"
 )
 
-ziel = st.selectbox("Was ist dein Ziel?", ["Muskelaufbau", "Abnehmen", "Fitness verbessern"])
-level = st.selectbox("Was ist dein Fitnesslevel?", ["Anfänger", "Fortgeschritten"])
+GOAL_OPTIONS = ["Muskelaufbau", "Abnehmen", "Gesünder & fitter werden"]
+LEVEL_OPTIONS = ["Anfänger", "Mittelstufe", "Fortgeschritten"]
+
+ziel = st.selectbox("Was ist dein Ziel?", GOAL_OPTIONS)
+level = st.selectbox("Was ist dein Fitnesslevel?", LEVEL_OPTIONS)
+
+if level == "Anfänger":
+    st.info("🏁 Anfänger: 0–1 Training pro Woche • Fokus auf Grundlagen und Einstieg")
+elif level == "Mittelstufe":
+    st.info("⚡ Mittelstufe: 2–3 Trainings pro Woche • Regelmäßiger Sport und erste Erfahrung")
+else:
+    st.info("🔥 Fortgeschritten: 4–6 Trainings pro Woche • Intensives und konstantes Training")
+
 trainingstage_anzahl = st.selectbox("Wie viele Trainingstage pro Woche möchtest du?", [3, 4, 5])
 
 st.subheader("Dein Trainingsplan")
@@ -89,7 +100,7 @@ elif ziel == "Abnehmen":
         }
 
 else:
-    fokus_text = "Fokus: allgemeine Fitness"
+    fokus_text = "Fokus: gesünder werden und allgemeine Fitness verbessern"
     zielwerte = {"protein_min": 20, "protein_max": 45, "kalorien_min": 450, "kalorien_max": 750}
 
     if trainingstage_anzahl == 3:
@@ -295,9 +306,9 @@ if not df.empty:
     if erledigte_anzahl < 5:
         user_level = "Anfänger"
     elif erledigte_anzahl < 15:
-        user_level = "Fortgeschritten"
+        user_level = "Mittelstufe"
     else:
-        user_level = "Pro"
+        user_level = "Fortgeschritten"
 
     col1, col2, col3 = st.columns(3)
     col1.metric("✅ Erledigte Trainings", erledigte_anzahl)
