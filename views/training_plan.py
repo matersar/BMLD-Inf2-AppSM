@@ -134,119 +134,34 @@ st.progress(erledigt_count / gesamt)
 st.write(f"Du hast **{erledigt_count} von {gesamt} Trainingstagen** geschafft.")
 st.metric("📈 Wochenfortschritt", f"{prozent}%")
 
-if prozent == 100:
-    st.success("Stark! Du hast alle geplanten Trainings geschafft 💪")
-elif prozent >= 50:
-    st.info("Guter Fortschritt! Bleib dran 🔥")
-else:
-    st.warning("Noch Luft nach oben – starte mit deinem nächsten Training!")
-
 st.divider()
 
-st.subheader("📊 Gespeicherte Trainingsfortschritte")
-
-df = progress_manager.load_progress()
-
-if not df.empty:
-    df_display = df.rename(columns={
-        "timestamp": "Datum",
-        "goal": "Ziel",
-        "level": "Fitnesslevel",
-        "training_days": "Trainingstage",
-        "day_name": "Trainingstag",
-        "completed": "Erledigt"
-    })
-
-    df_display["Erledigt"] = df_display["Erledigt"].map({True: "Ja", False: "Nein"})
-
-    st.dataframe(df_display, use_container_width=True)
-
-    erledigt_df = df[df["completed"] == True]
-    erledigte_anzahl = len(erledigt_df)
-
-    if erledigte_anzahl < 5:
-        user_level = "Anfänger"
-    elif erledigte_anzahl < 15:
-        user_level = "Fortgeschritten"
-    else:
-        user_level = "Pro"
-
-    col1, col2, col3 = st.columns(3)
-    col1.metric("✅ Erledigte Trainings", erledigte_anzahl)
-    col2.metric("📌 Alle Einträge", len(df))
-    col3.metric("🏅 Dein Level", user_level)
-
-    st.subheader("📈 Fortschritt nach Ziel")
-
-    chart_data = (
-        df.groupby(["goal", "completed"])
-        .size()
-        .reset_index(name="Anzahl")
-    )
-
-    chart_data = chart_data[chart_data["completed"] == True]
-    chart_data = chart_data.rename(columns={"goal": "Ziel"})
-
-    if not chart_data.empty:
-        st.bar_chart(chart_data, x="Ziel", y="Anzahl")
-    else:
-        st.info("Noch keine erledigten Trainings vorhanden.")
-
-    csv = df_display.to_csv(index=False)
-
-    st.download_button(
-        "Trainingsfortschritt als CSV exportieren",
-        csv,
-        "trainingsfortschritt.csv",
-        "text/csv"
-    )
-
-    if st.button("🗑 Fortschritt löschen"):
-        progress_manager.save_progress(pd.DataFrame(columns=[
-            "timestamp",
-            "goal",
-            "level",
-            "training_days",
-            "day_name",
-            "completed"
-        ]))
-        st.rerun()
-
-else:
-    st.info("Noch keine Daten vorhanden.")
-
-st.divider()
-
-st.subheader("📅 Wochenplan")
-
-for tag, muskelgruppen in trainingsplan.items():
-    st.markdown(f"### {tag}")
-
-    passende_uebungen = [
-        ex for ex in EXERCISES
-        if ex["muskelgruppe"] in muskelgruppen and ex["level"] == level
-    ]
-
-    for ex in passende_uebungen[:5]:
-        st.markdown(
-            f"- **{ex['name']}** ({ex['muskelgruppe']}) – "
-            f"{ex['saetze']} Sätze x {ex['wiederholungen']}"
-        )
-
-st.divider()
 st.subheader("🥗 Ernährung & Training Analyse")
 
-nutrition_df = data_manager.load_user_data(
-    "data.csv",
-    initial_value=pd.DataFrame()
-)
+nutrition_df = data_manager.load_user_data("data.csv", initial_value=pd.DataFrame())
 
-if not nutrition_df.empty and "Protein" in nutrition_df.columns and "Kalorien" in nutrition_df.columns:
+if not nutrition_df.empty and "Protein" in nutrition_df.columns:
+
     avg_protein = nutrition_df["Protein"].mean()
     avg_calories = nutrition_df["Kalorien"].mean()
 
-    st.write(f"Durchschnitt Protein: **{avg_protein:.1f} g**")
-    st.write(f"Durchschnitt Kalorien: **{avg_calories:.0f} kcal**")
+    st.subheader("📊 Deine durchschnittliche Ernährung")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.metric(
+            "💪 Ø Protein pro Mahlzeit",
+            f"{avg_protein:.1f} g",
+            "gut für Muskelaufbau" if avg_protein >= 25 else "könnte höher sein"
+        )
+
+    with col2:
+        st.metric(
+            "🔥 Ø Kalorien pro Mahlzeit",
+            f"{avg_calories:.0f} kcal",
+            "im Zielbereich" if 400 <= avg_calories <= 800 else "abweichend"
+        )
 
     protein_score = min(avg_protein / 30, 1.0) * 100
 
@@ -259,10 +174,17 @@ if not nutrition_df.empty and "Protein" in nutrition_df.columns and "Kalorien" i
 
     gesamt_score = round((protein_score + calorie_score) / 2)
 
+    if gesamt_score >= 80:
+        label = "Sehr gut"
+    elif gesamt_score >= 60:
+        label = "Gut"
+    else:
+        label = "Verbesserbar"
+
     col_a, col_b, col_c = st.columns(3)
     col_a.metric("💪 Protein-Score", f"{protein_score:.0f}%")
     col_b.metric("🔥 Kalorien-Score", f"{calorie_score:.0f}%")
-    col_c.metric("🎯 Gesamtbewertung", f"{gesamt_score}%")
+    col_c.metric("🎯 Gesamtbewertung", f"{gesamt_score}%", label)
 
     st.progress(gesamt_score / 100)
 
@@ -271,16 +193,9 @@ if not nutrition_df.empty and "Protein" in nutrition_df.columns and "Kalorien" i
     if gesamt_score >= 80:
         st.success("Sehr gut! Deine Ernährung passt stark zu deinem Trainingsziel 💪")
     elif gesamt_score >= 50:
-        st.info("Solide Grundlage. Mit kleinen Anpassungen passt deine Ernährung noch besser.")
+        st.info("Solide Grundlage. Mit kleinen Anpassungen wird es noch besser.")
     else:
-        st.warning("Deine Ernährung passt noch nicht optimal zu deinem Trainingsziel.")
-
-    if ziel == "Muskelaufbau":
-        st.write("Empfehlung: Achte auf ausreichend Protein und genug Kalorien für Muskelaufbau.")
-    elif ziel == "Abnehmen":
-        st.write("Empfehlung: Achte auf moderate Kalorien und genügend Protein, damit du satt bleibst.")
-    else:
-        st.write("Empfehlung: Achte auf eine ausgewogene Mahlzeit mit Protein, Kohlenhydraten und Fett.")
+        st.warning("Deine Ernährung passt noch nicht optimal zu deinem Ziel.")
 
 else:
     st.info("Noch keine Ernährungsdaten vorhanden.")
