@@ -152,7 +152,6 @@ if not df.empty:
     st.dataframe(df_display, use_container_width=True)
 
     erledigt_df = df[df["completed"] == True]
-
     erledigte_anzahl = len(erledigt_df)
 
     if erledigte_anzahl < 5:
@@ -170,16 +169,18 @@ if not df.empty:
     st.subheader("📈 Fortschritt nach Ziel")
 
     chart_data = (
-        erledigt_df.groupby("goal")
+        df.groupby(["goal", "completed"])
         .size()
-        .reset_index(name="Erledigte Trainings")
-        .rename(columns={"goal": "Ziel"})
+        .reset_index(name="Anzahl")
     )
 
+    chart_data = chart_data[chart_data["completed"] == True]
+    chart_data = chart_data.rename(columns={"goal": "Ziel"})
+
     if not chart_data.empty:
-        st.bar_chart(chart_data, x="Ziel", y="Erledigte Trainings")
+        st.bar_chart(chart_data, x="Ziel", y="Anzahl")
     else:
-        st.info("Noch keine erledigten Trainings für das Diagramm vorhanden.")
+        st.info("Noch keine erledigten Trainings vorhanden.")
 
     csv = df_display.to_csv(index=False)
 
