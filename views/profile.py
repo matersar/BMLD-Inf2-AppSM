@@ -9,22 +9,22 @@ data_manager = DataManager(
     fs_root_folder="Informatik_2_App"
 )
 
-# Profil laden
+PROFILE_COLUMNS = [
+    "Name",
+    "Alter",
+    "Geschlecht",
+    "Größe",
+    "Gewicht",
+    "Ziel",
+    "Fitnesslevel",
+    "Trainingstage"
+]
+
 profile_df = data_manager.load_user_data(
     "profile.csv",
-    initial_value=pd.DataFrame(columns=[
-        "Name",
-        "Alter",
-        "Geschlecht",
-        "Größe",
-        "Gewicht",
-        "Ziel",
-        "Fitnesslevel",
-        "Trainingstage"
-    ])
+    initial_value=pd.DataFrame(columns=PROFILE_COLUMNS)
 )
 
-# Falls schon Daten vorhanden → vorausfüllen
 if not profile_df.empty:
     latest_profile = profile_df.iloc[-1]
 
@@ -36,7 +36,6 @@ if not profile_df.empty:
     default_goal = latest_profile["Ziel"]
     default_level = latest_profile["Fitnesslevel"]
     default_trainingdays = int(latest_profile["Trainingstage"])
-
 else:
     default_name = ""
     default_age = 20
@@ -47,10 +46,26 @@ else:
     default_level = "Anfänger"
     default_trainingdays = 3
 
+gender_options = ["Weiblich", "Männlich"]
+goal_options = ["Muskelaufbau", "Abnehmen", "Fitness verbessern"]
+level_options = ["Anfänger", "Fortgeschritten"]
+trainingday_options = [3, 4, 5]
+
+if default_gender not in gender_options:
+    default_gender = "Weiblich"
+
+if default_goal not in goal_options:
+    default_goal = "Muskelaufbau"
+
+if default_level not in level_options:
+    default_level = "Anfänger"
+
+if default_trainingdays not in trainingday_options:
+    default_trainingdays = 3
+
 st.subheader("📋 Persönliche Daten")
 
 with st.form("profile_form"):
-
     name = st.text_input("Name", value=default_name)
 
     age = st.number_input(
@@ -60,16 +75,12 @@ with st.form("profile_form"):
         value=default_age
     )
 
-    gender_options = ["Weiblich", "Männlich"]
-
-if default_gender not in gender_options:
-    default_gender = "Weiblich"
-
     gender = st.selectbox(
-    "Geschlecht",
-    gender_options,
-    index=gender_options.index(default_gender)
-)
+        "Geschlecht",
+        gender_options,
+        index=gender_options.index(default_gender)
+    )
+
     height = st.number_input(
         "Größe (cm)",
         min_value=100.0,
@@ -86,26 +97,25 @@ if default_gender not in gender_options:
 
     goal = st.selectbox(
         "Ziel",
-        ["Muskelaufbau", "Abnehmen", "Fitness verbessern"],
-        index=["Muskelaufbau", "Abnehmen", "Fitness verbessern"].index(default_goal)
+        goal_options,
+        index=goal_options.index(default_goal)
     )
 
     level = st.selectbox(
         "Fitnesslevel",
-        ["Anfänger", "Fortgeschritten"],
-        index=["Anfänger", "Fortgeschritten"].index(default_level)
+        level_options,
+        index=level_options.index(default_level)
     )
 
     training_days = st.selectbox(
         "Trainingstage pro Woche",
-        [3, 4, 5],
-        index=[3, 4, 5].index(default_trainingdays)
+        trainingday_options,
+        index=trainingday_options.index(default_trainingdays)
     )
 
     submitted = st.form_submit_button("💾 Profil speichern")
 
 if submitted:
-
     new_profile = pd.DataFrame([{
         "Name": name,
         "Alter": age,
@@ -118,14 +128,16 @@ if submitted:
     }])
 
     data_manager.save_user_data(new_profile, "profile.csv")
-
     st.success("Profil gespeichert! ✅")
+    st.rerun()
 
-# Profil anzeigen
+profile_df = data_manager.load_user_data(
+    "profile.csv",
+    initial_value=pd.DataFrame(columns=PROFILE_COLUMNS)
+)
+
 if not profile_df.empty:
-
     st.divider()
-
     st.subheader("📊 Dein aktuelles Profil")
 
     latest = profile_df.iloc[-1]
@@ -145,7 +157,6 @@ if not profile_df.empty:
     bmi = latest["Gewicht"] / ((latest["Größe"] / 100) ** 2)
 
     st.subheader("🧠 BMI Analyse")
-
     st.metric("BMI", f"{bmi:.1f}")
 
     if bmi < 18.5:
