@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 from utils.exercise_data import EXERCISES
 from utils.progress_manager import ProgressManager
 
@@ -166,7 +167,75 @@ gesamt = len(trainingstage)
 st.progress(erledigt_count / gesamt)
 st.write(f"Du hast **{erledigt_count} von {gesamt} Trainingstagen** geschafft.")
 
+if erledigt_count == gesamt:
+    st.success("Stark! Du hast alle geplanten Trainings geschafft 💪")
+elif erledigt_count > 0:
+    st.info("Guter Fortschritt! Bleib dran 🔥")
+else:
+    st.warning("Noch kein Training erledigt. Starte mit dem ersten Training!")
+
 st.divider()
+
+st.subheader("📊 Gespeicherte Trainingsfortschritte")
+
+progress_df = progress_manager.load_progress()
+
+if progress_df.empty:
+    st.info("Noch keine Trainingsfortschritte gespeichert.")
+else:
+    progress_anzeige = progress_df.copy()
+
+    progress_anzeige = progress_anzeige.rename(columns={
+        "timestamp": "Datum",
+        "goal": "Ziel",
+        "level": "Fitnesslevel",
+        "training_days": "Trainingstage pro Woche",
+        "day_name": "Trainingstag",
+        "completed": "Erledigt"
+    })
+
+    progress_anzeige["Erledigt"] = progress_anzeige["Erledigt"].replace({
+        True: "Ja",
+        False: "Nein"
+    })
+
+    st.dataframe(progress_anzeige, use_container_width=True)
+
+    erledigte_trainings = progress_df[progress_df["completed"] == True]
+
+    col1, col2 = st.columns(2)
+
+    col1.metric("✅ Gespeicherte erledigte Trainings", len(erledigte_trainings))
+    col2.metric("📌 Alle gespeicherten Einträge", len(progress_df))
+
+    if not erledigte_trainings.empty:
+        beliebtestes_ziel = erledigte_trainings["goal"].mode()[0]
+        st.info(f"🏆 Häufigstes Trainingsziel: {beliebtestes_ziel}")
+
+    csv = progress_anzeige.to_csv(index=False)
+
+    st.download_button(
+        "Trainingsfortschritt als CSV exportieren",
+        csv,
+        "trainingsfortschritt.csv",
+        "text/csv"
+    )
+
+    if st.button("Trainingsfortschritt löschen"):
+        empty_df = pd.DataFrame(columns=[
+            "timestamp",
+            "goal",
+            "level",
+            "training_days",
+            "day_name",
+            "completed"
+        ])
+        progress_manager.save_progress(empty_df)
+        st.rerun()
+
+st.divider()
+
+st.subheader("📅 Wochenplan")
 
 for tag, muskelgruppen in trainingsplan.items():
     st.markdown(f"### {tag}")
