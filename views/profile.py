@@ -47,8 +47,8 @@ else:
     default_trainingdays = 3
 
 gender_options = ["Weiblich", "Männlich"]
-goal_options = ["Muskelaufbau", "Abnehmen", "Fitness verbessern"]
-level_options = ["Anfänger", "Fortgeschritten"]
+goal_options = ["Muskelaufbau", "Abnehmen", "Gesünder & fitter werden"]
+level_options = ["Anfänger", "Mittelstufe", "Fortgeschritten"]
 trainingday_options = [3, 4, 5]
 
 if default_gender not in gender_options:
@@ -113,6 +113,12 @@ with st.form("profile_form"):
         index=trainingday_options.index(default_trainingdays)
     )
 
+    st.info(
+        "🏁 Anfänger: 0–1 Training/Woche • "
+        "⚡ Mittelstufe: 2–3 Trainings/Woche • "
+        "🔥 Fortgeschritten: 4–6 Trainings/Woche"
+    )
+
     submitted = st.form_submit_button("💾 Profil speichern")
 
 if submitted:
@@ -148,11 +154,13 @@ if not profile_df.empty:
         st.metric("👤 Name", latest["Name"])
         st.metric("🎂 Alter", f"{latest['Alter']} Jahre")
         st.metric("⚖️ Gewicht", f"{latest['Gewicht']} kg")
+        st.metric("🚻 Geschlecht", latest["Geschlecht"])
 
     with col2:
         st.metric("📏 Größe", f"{latest['Größe']} cm")
         st.metric("🎯 Ziel", latest["Ziel"])
         st.metric("🏋️ Fitnesslevel", latest["Fitnesslevel"])
+        st.metric("📅 Trainingstage", f"{latest['Trainingstage']} pro Woche")
 
     bmi = latest["Gewicht"] / ((latest["Größe"] / 100) ** 2)
 
