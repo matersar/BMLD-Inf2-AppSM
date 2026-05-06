@@ -20,6 +20,13 @@ st.subheader("Dein Trainingsplan")
 
 if ziel == "Muskelaufbau":
     fokus_text = "Fokus: Krafttraining und Muskelaufbau"
+    zielwerte = {
+        "protein_min": 25,
+        "protein_max": 50,
+        "kalorien_min": 600,
+        "kalorien_max": 900,
+    }
+
     if trainingstage_anzahl == 3:
         trainingsplan = {
             "Montag: Rücken & Arme": ["Rücken", "Arme"],
@@ -44,6 +51,13 @@ if ziel == "Muskelaufbau":
 
 elif ziel == "Abnehmen":
     fokus_text = "Fokus: Ganzkörpertraining und Kalorienverbrauch"
+    zielwerte = {
+        "protein_min": 20,
+        "protein_max": 40,
+        "kalorien_min": 350,
+        "kalorien_max": 650,
+    }
+
     if trainingstage_anzahl == 3:
         trainingsplan = {
             "Montag: Beine & Bauch": ["Beine", "Bauch"],
@@ -67,6 +81,13 @@ elif ziel == "Abnehmen":
 
 else:
     fokus_text = "Fokus: allgemeine Fitness"
+    zielwerte = {
+        "protein_min": 20,
+        "protein_max": 45,
+        "kalorien_min": 450,
+        "kalorien_max": 750,
+    }
+
     if trainingstage_anzahl == 3:
         trainingsplan = {
             "Montag: Oberkörper": ["Rücken", "Arme"],
@@ -140,12 +161,43 @@ st.subheader("🥗 Ernährung & Training Analyse")
 
 nutrition_df = data_manager.load_user_data("data.csv", initial_value=pd.DataFrame())
 
-if not nutrition_df.empty and "Protein" in nutrition_df.columns:
-
+if not nutrition_df.empty and "Protein" in nutrition_df.columns and "Kalorien" in nutrition_df.columns:
     avg_protein = nutrition_df["Protein"].mean()
     avg_calories = nutrition_df["Kalorien"].mean()
 
+    st.subheader("🎯 Zielbereiche pro Mahlzeit")
+
+    zielbereich_df = pd.DataFrame([
+        {
+            "Ziel": ziel,
+            "Protein-Zielbereich": f"{zielwerte['protein_min']}–{zielwerte['protein_max']} g",
+            "Kalorien-Zielbereich": f"{zielwerte['kalorien_min']}–{zielwerte['kalorien_max']} kcal",
+        }
+    ])
+
+    st.dataframe(zielbereich_df, use_container_width=True, hide_index=True)
+
     st.subheader("📊 Deine durchschnittliche Ernährung")
+
+    def bewertung_wert(wert, minimum, maximum):
+        if wert < minimum:
+            return "zu niedrig"
+        elif wert > maximum:
+            return "zu hoch"
+        else:
+            return "im Zielbereich"
+
+    protein_status = bewertung_wert(
+        avg_protein,
+        zielwerte["protein_min"],
+        zielwerte["protein_max"]
+    )
+
+    kalorien_status = bewertung_wert(
+        avg_calories,
+        zielwerte["kalorien_min"],
+        zielwerte["kalorien_max"]
+    )
 
     col1, col2 = st.columns(2)
 
@@ -153,26 +205,40 @@ if not nutrition_df.empty and "Protein" in nutrition_df.columns:
         st.metric(
             "💪 Ø Protein pro Mahlzeit",
             f"{avg_protein:.1f} g",
-            "gut für Muskelaufbau" if avg_protein >= 25 else "könnte höher sein"
+            protein_status
         )
 
     with col2:
         st.metric(
             "🔥 Ø Kalorien pro Mahlzeit",
             f"{avg_calories:.0f} kcal",
-            "im Zielbereich" if 400 <= avg_calories <= 800 else "abweichend"
+            kalorien_status
         )
 
-    protein_score = min(avg_protein / 30, 1.0) * 100
+    def berechne_score(wert, minimum, maximum):
+        mitte = (minimum + maximum) / 2
+        toleranz = (maximum - minimum) / 2
 
-    if ziel == "Muskelaufbau":
-        calorie_score = min(avg_calories / 650, 1.0) * 100
-    elif ziel == "Abnehmen":
-        calorie_score = max(0, min((800 - avg_calories) / 400, 1.0)) * 100
-    else:
-        calorie_score = max(0, 100 - abs(avg_calories - 600) / 6)
+        if minimum <= wert <= maximum:
+            return 100
 
-    gesamt_score = round((protein_score + calorie_score) / 2)
+        abstand = abs(wert - mitte)
+        score = max(0, 100 - ((abstand - toleranz) / toleranz) * 50)
+        return min(score, 100)
+
+    protein_score = berechne_score(
+        avg_protein,
+        zielwerte["protein_min"],
+        zielwerte["protein_max"]
+    )
+
+    kalorien_score = berechne_score(
+        avg_calories,
+        zielwerte["kalorien_min"],
+        zielwerte["kalorien_max"]
+    )
+
+    gesamt_score = round((protein_score + kalorien_score) / 2)
 
     if gesamt_score >= 80:
         label = "Sehr gut"
@@ -183,19 +249,115 @@ if not nutrition_df.empty and "Protein" in nutrition_df.columns:
 
     col_a, col_b, col_c = st.columns(3)
     col_a.metric("💪 Protein-Score", f"{protein_score:.0f}%")
-    col_b.metric("🔥 Kalorien-Score", f"{calorie_score:.0f}%")
+    col_b.metric("🔥 Kalorien-Score", f"{kalorien_score:.0f}%")
     col_c.metric("🎯 Gesamtbewertung", f"{gesamt_score}%", label)
 
     st.progress(gesamt_score / 100)
 
     st.subheader("🎯 Bewertung passend zu deinem Ziel")
 
-    if gesamt_score >= 80:
-        st.success("Sehr gut! Deine Ernährung passt stark zu deinem Trainingsziel 💪")
-    elif gesamt_score >= 50:
-        st.info("Solide Grundlage. Mit kleinen Anpassungen wird es noch besser.")
+    if protein_status == "im Zielbereich" and kalorien_status == "im Zielbereich":
+        st.success("Sehr gut! Protein und Kalorien liegen passend zu deinem Trainingsziel im Zielbereich 💪")
+    elif protein_status == "zu niedrig":
+        st.warning("Dein Proteinwert ist für dieses Ziel zu niedrig. Ergänze proteinreiche Lebensmittel.")
+    elif kalorien_status == "zu niedrig":
+        st.warning("Deine Kalorien sind für dieses Ziel zu niedrig. Eine größere oder energiereichere Mahlzeit wäre sinnvoll.")
+    elif kalorien_status == "zu hoch":
+        st.warning("Deine Kalorien sind für dieses Ziel zu hoch. Eine kleinere Portion wäre sinnvoll.")
     else:
-        st.warning("Deine Ernährung passt noch nicht optimal zu deinem Ziel.")
+        st.info("Deine Ernährung ist solide, kann aber noch genauer an dein Ziel angepasst werden.")
 
 else:
     st.info("Noch keine Ernährungsdaten vorhanden.")
+
+st.divider()
+
+st.subheader("📊 Gespeicherte Trainingsfortschritte")
+
+df = progress_manager.load_progress()
+
+if not df.empty:
+    df_display = df.rename(columns={
+        "timestamp": "Datum",
+        "goal": "Ziel",
+        "level": "Fitnesslevel",
+        "training_days": "Trainingstage",
+        "day_name": "Trainingstag",
+        "completed": "Erledigt"
+    })
+
+    df_display["Erledigt"] = df_display["Erledigt"].map({True: "Ja", False: "Nein"})
+
+    st.dataframe(df_display, use_container_width=True)
+
+    erledigt_df = df[df["completed"] == True]
+    erledigte_anzahl = len(erledigt_df)
+
+    if erledigte_anzahl < 5:
+        user_level = "Anfänger"
+    elif erledigte_anzahl < 15:
+        user_level = "Fortgeschritten"
+    else:
+        user_level = "Pro"
+
+    col1, col2, col3 = st.columns(3)
+    col1.metric("✅ Erledigte Trainings", erledigte_anzahl)
+    col2.metric("📌 Alle Einträge", len(df))
+    col3.metric("🏅 Dein Level", user_level)
+
+    st.subheader("📈 Fortschritt nach Ziel")
+
+    chart_data = (
+        df.groupby(["goal", "completed"])
+        .size()
+        .reset_index(name="Anzahl")
+    )
+
+    chart_data = chart_data[chart_data["completed"] == True]
+    chart_data = chart_data.rename(columns={"goal": "Ziel"})
+
+    if not chart_data.empty:
+        st.bar_chart(chart_data, x="Ziel", y="Anzahl")
+    else:
+        st.info("Noch keine erledigten Trainings vorhanden.")
+
+    csv = df_display.to_csv(index=False)
+
+    st.download_button(
+        "Trainingsfortschritt als CSV exportieren",
+        csv,
+        "trainingsfortschritt.csv",
+        "text/csv"
+    )
+
+    if st.button("🗑 Fortschritt löschen"):
+        progress_manager.save_progress(pd.DataFrame(columns=[
+            "timestamp",
+            "goal",
+            "level",
+            "training_days",
+            "day_name",
+            "completed"
+        ]))
+        st.rerun()
+
+else:
+    st.info("Noch keine Daten vorhanden.")
+
+st.divider()
+
+st.subheader("📅 Wochenplan")
+
+for tag, muskelgruppen in trainingsplan.items():
+    st.markdown(f"### {tag}")
+
+    passende_uebungen = [
+        ex for ex in EXERCISES
+        if ex["muskelgruppe"] in muskelgruppen and ex["level"] == level
+    ]
+
+    for ex in passende_uebungen[:5]:
+        st.markdown(
+            f"- **{ex['name']}** ({ex['muskelgruppe']}) – "
+            f"{ex['saetze']} Sätze x {ex['wiederholungen']}"
+        )
