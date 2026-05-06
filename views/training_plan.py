@@ -222,3 +222,44 @@ for tag, muskelgruppen in trainingsplan.items():
             f"- **{ex['name']}** ({ex['muskelgruppe']}) – "
             f"{ex['saetze']} Sätze x {ex['wiederholungen']}"
         )
+st.divider()
+st.subheader("🥗 Ernährung & Training Analyse")
+
+from utils.data_manager import DataManager
+data_manager = DataManager(
+    fs_protocol="webdav",
+    fs_root_folder="Informatik_2_App"
+)
+
+nutrition_df = data_manager.load_user_data("data.csv", initial_value=pd.DataFrame())
+
+if not nutrition_df.empty:
+
+    avg_protein = nutrition_df["Protein"].mean()
+    avg_calories = nutrition_df["Kalorien"].mean()
+
+    st.write(f"Durchschnitt Protein: {avg_protein:.1f} g")
+    st.write(f"Durchschnitt Kalorien: {avg_calories:.0f} kcal")
+
+    st.subheader("🎯 Bewertung passend zu deinem Ziel")
+
+    if ziel == "Muskelaufbau":
+        if avg_protein >= 25:
+            st.success("Sehr gut! Deine Ernährung unterstützt Muskelaufbau 💪")
+        else:
+            st.warning("Zu wenig Protein für Muskelaufbau!")
+
+    elif ziel == "Abnehmen":
+        if avg_calories < 700:
+            st.success("Gut für Abnehmen 👍")
+        else:
+            st.warning("Zu viele Kalorien für dein Ziel!")
+
+    else:
+        if 400 <= avg_calories <= 800:
+            st.success("Gute Balance für Fitness 🏃")
+        else:
+            st.info("Achte auf ausgewogene Ernährung.")
+
+else:
+    st.info("Noch keine Ernährungsdaten vorhanden.")
