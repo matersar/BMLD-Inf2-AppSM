@@ -2,10 +2,15 @@ import streamlit as st
 import pandas as pd
 from utils.exercise_data import EXERCISES
 from utils.progress_manager import ProgressManager
+from utils.data_manager import DataManager
 
 st.title("🏋️ Trainingsplan")
 
 progress_manager = ProgressManager()
+data_manager = DataManager(
+    fs_protocol="webdav",
+    fs_root_folder="Informatik_2_App"
+)
 
 ziel = st.selectbox("Was ist dein Ziel?", ["Muskelaufbau", "Abnehmen", "Fitness verbessern"])
 level = st.selectbox("Was ist dein Fitnesslevel?", ["Anfänger", "Fortgeschritten"])
@@ -14,6 +19,7 @@ trainingstage_anzahl = st.selectbox("Wie viele Trainingstage pro Woche möchtest
 st.subheader("Dein Trainingsplan")
 
 if ziel == "Muskelaufbau":
+    fokus_text = "Fokus: Krafttraining und Muskelaufbau"
     if trainingstage_anzahl == 3:
         trainingsplan = {
             "Montag: Rücken & Arme": ["Rücken", "Arme"],
@@ -37,6 +43,7 @@ if ziel == "Muskelaufbau":
         }
 
 elif ziel == "Abnehmen":
+    fokus_text = "Fokus: Ganzkörpertraining und Kalorienverbrauch"
     if trainingstage_anzahl == 3:
         trainingsplan = {
             "Montag: Beine & Bauch": ["Beine", "Bauch"],
@@ -59,6 +66,7 @@ elif ziel == "Abnehmen":
         }
 
 else:
+    fokus_text = "Fokus: allgemeine Fitness"
     if trainingstage_anzahl == 3:
         trainingsplan = {
             "Montag: Oberkörper": ["Rücken", "Arme"],
@@ -80,6 +88,8 @@ else:
             "Donnerstag: Arme": ["Arme"],
             "Freitag: Ganzkörper": ["Po", "Beine", "Rücken"],
         }
+
+st.write(fokus_text)
 
 if "checkbox_states" not in st.session_state:
     st.session_state["checkbox_states"] = {}
@@ -222,44 +232,55 @@ for tag, muskelgruppen in trainingsplan.items():
             f"- **{ex['name']}** ({ex['muskelgruppe']}) – "
             f"{ex['saetze']} Sätze x {ex['wiederholungen']}"
         )
+
 st.divider()
 st.subheader("🥗 Ernährung & Training Analyse")
 
-from utils.data_manager import DataManager
-data_manager = DataManager(
-    fs_protocol="webdav",
-    fs_root_folder="Informatik_2_App"
+nutrition_df = data_manager.load_user_data(
+    "data.csv",
+    initial_value=pd.DataFrame()
 )
 
-nutrition_df = data_manager.load_user_data("data.csv", initial_value=pd.DataFrame())
-
-if not nutrition_df.empty:
-
+if not nutrition_df.empty and "Protein" in nutrition_df.columns and "Kalorien" in nutrition_df.columns:
     avg_protein = nutrition_df["Protein"].mean()
     avg_calories = nutrition_df["Kalorien"].mean()
 
-    st.write(f"Durchschnitt Protein: {avg_protein:.1f} g")
-    st.write(f"Durchschnitt Kalorien: {avg_calories:.0f} kcal")
+    st.write(f"Durchschnitt Protein: **{avg_protein:.1f} g**")
+    st.write(f"Durchschnitt Kalorien: **{avg_calories:.0f} kcal**")
+
+    protein_score = min(avg_protein / 30, 1.0) * 100
+
+    if ziel == "Muskelaufbau":
+        calorie_score = min(avg_calories / 650, 1.0) * 100
+    elif ziel == "Abnehmen":
+        calorie_score = max(0, min((800 - avg_calories) / 400, 1.0)) * 100
+    else:
+        calorie_score = max(0, 100 - abs(avg_calories - 600) / 6)
+
+    gesamt_score = round((protein_score + calorie_score) / 2)
+
+    col_a, col_b, col_c = st.columns(3)
+    col_a.metric("💪 Protein-Score", f"{protein_score:.0f}%")
+    col_b.metric("🔥 Kalorien-Score", f"{calorie_score:.0f}%")
+    col_c.metric("🎯 Gesamtbewertung", f"{gesamt_score}%")
+
+    st.progress(gesamt_score / 100)
 
     st.subheader("🎯 Bewertung passend zu deinem Ziel")
 
-    if ziel == "Muskelaufbau":
-        if avg_protein >= 25:
-            st.success("Sehr gut! Deine Ernährung unterstützt Muskelaufbau 💪")
-        else:
-            st.warning("Zu wenig Protein für Muskelaufbau!")
-
-    elif ziel == "Abnehmen":
-        if avg_calories < 700:
-            st.success("Gut für Abnehmen 👍")
-        else:
-            st.warning("Zu viele Kalorien für dein Ziel!")
-
+    if gesamt_score >= 80:
+        st.success("Sehr gut! Deine Ernährung passt stark zu deinem Trainingsziel 💪")
+    elif gesamt_score >= 50:
+        st.info("Solide Grundlage. Mit kleinen Anpassungen passt deine Ernährung noch besser.")
     else:
-        if 400 <= avg_calories <= 800:
-            st.success("Gute Balance für Fitness 🏃")
-        else:
-            st.info("Achte auf ausgewogene Ernährung.")
+        st.warning("Deine Ernährung passt noch nicht optimal zu deinem Trainingsziel.")
+
+    if ziel == "Muskelaufbau":
+        st.write("Empfehlung: Achte auf ausreichend Protein und genug Kalorien für Muskelaufbau.")
+    elif ziel == "Abnehmen":
+        st.write("Empfehlung: Achte auf moderate Kalorien und genügend Protein, damit du satt bleibst.")
+    else:
+        st.write("Empfehlung: Achte auf eine ausgewogene Mahlzeit mit Protein, Kohlenhydraten und Fett.")
 
 else:
     st.info("Noch keine Ernährungsdaten vorhanden.")
