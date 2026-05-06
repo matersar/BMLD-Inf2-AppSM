@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import io
 
 from utils.data_manager import DataManager
 
@@ -16,7 +15,27 @@ Mit diesem Rechner kannst du die Nährwerte deiner Mahlzeit berechnen.
 Gib Lebensmittelmengen ein und berechne Kalorien, Protein, Zucker und Fett.
 """)
 
-# Session State vorbereiten
+# Falls data_df noch nicht existiert, vorbereiten
+if "data_df" not in st.session_state:
+    st.session_state["data_df"] = data_manager.load_user_data(
+        "data.csv",
+        initial_value=pd.DataFrame(columns=[
+            "timestamp",
+            "Name",
+            "Portion (g)",
+            "Kalorien",
+            "Protein",
+            "Fett",
+            "Kohlenhydrate",
+            "Zucker",
+            "Ballaststoffe",
+            "Mahlzeit-Typ",
+            "Ziel",
+            "Lecker-Score",
+            "Notiz"
+        ]),
+        parse_dates=["timestamp"]
+    )
 
 with st.form("nutrition_form"):
     st.subheader("Lebensmittel eingeben")
@@ -31,9 +50,9 @@ with st.form("nutrition_form"):
     carbs_100 = st.number_input("Kohlenhydrate pro 100g", value=25.0)
     fiber_100 = st.number_input("Ballaststoffe pro 100g", value=3.0)
 
-    meal_type = st.selectbox("Mahlzeit Typ", ["Frühstück","Mittagessen","Abendessen","Snack"])
-    goal = st.radio("Ziel", ["Abnehmen","Halten","Zunehmen"])
-    tasty = st.slider("Wie lecker ist es? 😋",1,10,7)
+    meal_type = st.selectbox("Mahlzeit Typ", ["Frühstück", "Mittagessen", "Abendessen", "Snack"])
+    goal = st.radio("Ziel", ["Abnehmen", "Halten", "Zunehmen"])
+    tasty = st.slider("Wie lecker ist es? 😋", 1, 10, 7)
 
     add_note = st.checkbox("Notiz hinzufügen")
     note = st.text_area("Notiz", disabled=not add_note)
@@ -41,7 +60,6 @@ with st.form("nutrition_form"):
     submitted = st.form_submit_button("✅ Nährwerte berechnen")
 
 if submitted:
-
     factor = portion_g / 100
 
     calories = calories_100 * factor
@@ -51,52 +69,44 @@ if submitted:
     carbs = carbs_100 * factor
     fiber = fiber_100 * factor
 
-    # Werte speichern
-    st.session_state.calories = calories
-    st.session_state.protein = protein
-    st.session_state.fat = fat
-    st.session_state.carbs = carbs
-    st.session_state.sugar = sugar
-    st.session_state.fiber = fiber
-    st.session_state.meal_name = meal_name
-    st.session_state.meal_type = meal_type
-    st.session_state.goal = goal
+    st.session_state["last_meal"] = {
+        "timestamp": pd.Timestamp.now(),
+        "Name": meal_name,
+        "Portion (g)": round(portion_g, 1),
+        "Kalorien": round(calories, 0),
+        "Protein": round(protein, 1),
+        "Fett": round(fat, 1),
+        "Kohlenhydrate": round(carbs, 1),
+        "Zucker": round(sugar, 1),
+        "Ballaststoffe": round(fiber, 1),
+        "Mahlzeit-Typ": meal_type,
+        "Ziel": goal,
+        "Lecker-Score": tasty,
+        "Notiz": note if add_note else ""
+    }
 
     st.subheader(f"📊 Ergebnis: {meal_name}")
     st.write(f"Mahlzeit-Typ: {meal_type} | Ziel: {goal} | Lecker-Score: {tasty}/10")
 
-    col1,col2,col3 = st.columns(3)
-
+    col1, col2, col3 = st.columns(3)
     col1.metric("Kalorien", f"{calories:.0f} kcal")
     col2.metric("Protein", f"{protein:.1f} g")
     col3.metric("Fett", f"{fat:.1f} g")
 
-    col4,col5,col6 = st.columns(3)
-
+    col4, col5, col6 = st.columns(3)
     col4.metric("Zucker", f"{sugar:.1f} g")
     col5.metric("Kohlenhydrate", f"{carbs:.1f} g")
     col6.metric("Ballaststoffe", f"{fiber:.1f} g")
 
     st.subheader("📈 Makros als Diagramm")
 
-    chart_data = {
-        "Makro":["Protein","Fett","Kohlenhydrate","Zucker","Ballaststoffe"],
-        "Gramm":[protein,fat,carbs,sugar,fiber]
-    }
+    chart_df = pd.DataFrame({
+        "Makro": ["Protein", "Fett", "Kohlenhydrate", "Zucker", "Ballaststoffe"],
+        "Gramm": [protein, fat, carbs, sugar, fiber]
+    })
 
-    st.bar_chart(chart_data,x="Makro",y="Gramm")
+    st.bar_chart(chart_df, x="Makro", y="Gramm")
 
-    # Plausibilitätscheck
-    if calories > 2000:
-        st.warning("⚠️ Sehr viele Kalorien für eine Portion")
-
-    if sugar > 50:
-        st.warning("⚠️ Sehr viel Zucker")
-
-    if protein > 100:
-        st.info("💪 Extrem proteinreiche Mahlzeit")
-
-    # Bewertung
     st.subheader("🔥 Kalorienbewertung")
 
     if calories < 400:
@@ -106,7 +116,26 @@ if submitted:
     else:
         st.warning("Sehr kalorienreich")
 
-    # Einschätzung
+    st.subheader("🎯 Empfehlung passend zum Ziel")
+
+    if goal == "Abnehmen":
+        if calories <= 600 and protein >= 20:
+            st.success("Gut fürs Abnehmen: moderate Kalorien und genug Protein.")
+        elif calories > 800:
+            st.warning("Für Abnehmen eher kalorienreich. Kleinere Portion oder mehr Gemüse wäre besser.")
+        else:
+            st.info("Für Abnehmen okay, achte aber auf genug Protein.")
+    elif goal == "Zunehmen":
+        if calories >= 600 and protein >= 25:
+            st.success("Gut fürs Zunehmen/Muskelaufbau: viele Kalorien und gutes Protein.")
+        else:
+            st.info("Für Zunehmen könntest du mehr Kalorien oder Protein ergänzen.")
+    else:
+        if 400 <= calories <= 800:
+            st.success("Gut zum Halten: normale Mahlzeit.")
+        else:
+            st.info("Achte beim Halten auf eine ausgewogene Tagesbilanz.")
+
     st.subheader("🧠 Kurze Einschätzung")
 
     if protein >= 25 and sugar <= 15:
@@ -116,31 +145,21 @@ if submitted:
     else:
         st.info("Sieht okay aus")
 
-# Mahlzeit speichern
 st.subheader("💾 Mahlzeiten speichern")
 
 if st.button("➕ Mahlzeit speichern", key="save_btn"):
-    new_row = {
-        "timestamp": pd.Timestamp.now(),
-        "Name": st.session_state.meal_name,
-        "Kalorien": round(st.session_state.calories, 0),
-        "Protein": round(st.session_state.protein, 1),
-        "Fett": round(st.session_state.fat, 1),
-        "Kohlenhydrate": round(st.session_state.carbs, 1),
-        "Zucker": round(st.session_state.sugar, 1),
-        "Ballaststoffe": round(st.session_state.fiber, 1),
-        "Mahlzeit-Typ": st.session_state.meal_type,
-        "Ziel": st.session_state.goal
-    }
+    if "last_meal" not in st.session_state:
+        st.error("Bitte zuerst die Nährwerte berechnen, bevor du die Mahlzeit speicherst.")
+    else:
+        new_row = st.session_state["last_meal"]
 
-    st.session_state["data_df"] = pd.concat(
-        [st.session_state["data_df"], pd.DataFrame([new_row])],
-        ignore_index=True
-    )
+        st.session_state["data_df"] = pd.concat(
+            [st.session_state["data_df"], pd.DataFrame([new_row])],
+            ignore_index=True
+        )
 
-data_manager.save_user_data(st.session_state["data_df"], "data.csv")
-
-st.success("Mahlzeit gespeichert!")
+        data_manager.save_user_data(st.session_state["data_df"], "data.csv")
+        st.success("Mahlzeit gespeichert! ✅")
 
 if not st.session_state["data_df"].empty:
     st.subheader("📊 Gespeicherte Mahlzeiten")
@@ -152,22 +171,23 @@ if not st.session_state["data_df"].empty:
     total_kcal = df["Kalorien"].sum()
     avg_kcal = df["Kalorien"].mean()
 
-    st.metric("🔥 Gesamt Kalorien", f"{total_kcal:.0f} kcal")
-    st.metric("📊 Durchschnitt Kalorien", f"{avg_kcal:.0f} kcal")
+    col1, col2 = st.columns(2)
+    col1.metric("🔥 Gesamt Kalorien", f"{total_kcal:.0f} kcal")
+    col2.metric("📊 Durchschnitt Kalorien", f"{avg_kcal:.0f} kcal")
 
-    top_protein = df.loc[df["Protein"].idxmax()]
-    st.info(f"🏆 Proteinreichste Mahlzeit: {top_protein['Name']} ({top_protein['Protein']} g Protein)")
+    if "Protein" in df.columns and not df["Protein"].empty:
+        top_protein = df.loc[df["Protein"].idxmax()]
+        st.info(f"🏆 Proteinreichste Mahlzeit: {top_protein['Name']} ({top_protein['Protein']} g Protein)")
 
-    col1,col2 = st.columns(2)
+    col3, col4 = st.columns(2)
 
-    with col1:
+    with col3:
         if st.button("Liste leeren"):
-            st.session_state["data_df"] = pd.DataFrame()
+            st.session_state["data_df"] = pd.DataFrame(columns=df.columns)
             data_manager.save_user_data(st.session_state["data_df"], "data.csv")
             st.rerun()
 
-    with col2:
-
+    with col4:
         csv = df.to_csv(index=False)
 
         st.download_button(
@@ -176,4 +196,3 @@ if not st.session_state["data_df"].empty:
             "mahlzeiten.csv",
             "text/csv"
         )
-  
