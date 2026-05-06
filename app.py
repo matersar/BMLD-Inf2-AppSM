@@ -55,11 +55,20 @@ pg_training = st.Page(
     icon=":material/fitness_center:"
 )
 
+# PROFIL
+pg_profile = st.Page(
+    "views/profile.py",
+    title="Mein Profil",
+    icon=":material/person:"
+)
+
 # Navigation
 pg = st.navigation([
     pg_home,
+    pg_profile,
     pg_nutrition,
     pg_training
+    
 ])
 
 pg.run()
