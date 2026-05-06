@@ -32,7 +32,6 @@ Zusätzlich nutzt die App dein gespeichertes Profil, um persönliche Empfehlunge
 für Kalorien, Protein und Wasser zu geben.
 """)
 
-# Profil laden
 profile_df = data_manager.load_user_data(
     "profile.csv",
     initial_value=pd.DataFrame()
@@ -47,14 +46,12 @@ if not profile_df.empty:
     profil_name = profile.get("Name", "")
 
     st.success(f"Profil geladen ✅ {profil_name}")
-
 else:
     profil_ziel = "Muskelaufbau"
     profil_gewicht = 70.0
     profil_trainingstage = 3
     st.info("Noch kein Profil gespeichert. Es werden Standardwerte genutzt.")
 
-# Profil-Ziel zu Ernährungsziel umwandeln
 if profil_ziel == "Muskelaufbau":
     default_goal = "Zunehmen"
 elif profil_ziel == "Abnehmen":
@@ -62,7 +59,6 @@ elif profil_ziel == "Abnehmen":
 else:
     default_goal = "Halten"
 
-# Einfache persönliche Zielwerte
 if default_goal == "Abnehmen":
     kalorien_ziel = profil_gewicht * 28
     protein_ziel = profil_gewicht * 1.6
@@ -73,17 +69,15 @@ else:
     kalorien_ziel = profil_gewicht * 32
     protein_ziel = profil_gewicht * 1.5
 
-# Trainingstage leicht berücksichtigen
 kalorien_ziel = kalorien_ziel + (profil_trainingstage * 50)
 wasser_ziel = profil_gewicht * 35 / 1000
 
 st.subheader("🎯 Persönliche Tagesziele")
 
 col_z1, col_z2, col_z3 = st.columns(3)
-
-col_z1.metric("🔥 Kalorienziel", f"{kalorien_ziel:.0f} kcal/Tag")
-col_z2.metric("💪 Proteinziel", f"{protein_ziel:.0f} g/Tag")
-col_z3.metric("💧 Wasserziel", f"{wasser_ziel:.1f} L/Tag")
+col_z1.metric("🔥 Kalorienziel heute", f"{kalorien_ziel:.0f} kcal")
+col_z2.metric("💪 Proteinziel heute", f"{protein_ziel:.0f} g")
+col_z3.metric("💧 Wasserziel heute", f"{wasser_ziel:.1f} L")
 
 st.caption("Die Werte sind einfache Richtwerte basierend auf Gewicht, Ziel und Trainingstagen.")
 
@@ -115,7 +109,7 @@ with st.form("nutrition_form"):
     goal_options = ["Abnehmen", "Halten", "Zunehmen"]
 
     goal = st.radio(
-        "Ziel",
+        "Ernährungsziel",
         goal_options,
         index=goal_options.index(default_goal)
     )
@@ -154,7 +148,7 @@ if submitted:
     }
 
     st.subheader(f"📊 Ergebnis: {meal_name}")
-    st.write(f"Mahlzeit-Typ: {meal_type} | Ziel: {goal} | Lecker-Score: {tasty}/10")
+    st.write(f"Mahlzeit-Typ: {meal_type} | Ernährungsziel: {goal} | Lecker-Score: {tasty}/10")
 
     col1, col2, col3 = st.columns(3)
     col1.metric("Kalorien", f"{calories:.0f} kcal")
@@ -175,43 +169,43 @@ if submitted:
 
     st.bar_chart(chart_df, x="Makro", y="Gramm")
 
-    st.subheader("🎯 Bewertung passend zu deinem Tagesziel")
+    st.subheader("🎯 Bewertung dieser Mahlzeit")
 
     kalorien_anteil = calories / kalorien_ziel
     protein_anteil = protein / protein_ziel
 
     col_a, col_b = st.columns(2)
-    col_a.metric("🔥 Anteil am Kalorienziel", f"{kalorien_anteil * 100:.0f}%")
-    col_b.metric("💪 Anteil am Proteinziel", f"{protein_anteil * 100:.0f}%")
+    col_a.metric("🔥 Anteil am Tages-Kalorienziel", f"{kalorien_anteil * 100:.0f}%")
+    col_b.metric("💪 Anteil am Tages-Proteinziel", f"{protein_anteil * 100:.0f}%")
 
     if goal == "Abnehmen":
         if calories <= kalorien_ziel / 3 and protein >= protein_ziel / 4:
-            st.success("Gut fürs Abnehmen: moderate Kalorien und viel Protein.")
+            st.success("Diese Mahlzeit passt gut zum Abnehmen: moderate Kalorien und viel Protein.")
         elif calories > kalorien_ziel / 2:
-            st.warning("Für Abnehmen ist diese Mahlzeit relativ kalorienreich.")
+            st.warning("Diese Mahlzeit ist für Abnehmen relativ kalorienreich.")
         else:
-            st.info("Für Abnehmen okay, achte aber weiter auf genug Protein.")
+            st.info("Diese Mahlzeit ist okay fürs Abnehmen. Achte weiter auf genug Protein.")
 
     elif goal == "Zunehmen":
         if calories >= kalorien_ziel / 4 and protein >= protein_ziel / 4:
-            st.success("Gut fürs Zunehmen/Muskelaufbau: ausreichend Kalorien und Protein.")
+            st.success("Diese Mahlzeit passt gut zu Muskelaufbau/Zunehmen: genug Kalorien und Protein.")
         else:
-            st.info("Für Zunehmen könntest du mehr Kalorien oder Protein ergänzen.")
+            st.info("Für Muskelaufbau/Zunehmen könntest du mehr Kalorien oder Protein ergänzen.")
 
     else:
         if calories <= kalorien_ziel / 3:
-            st.success("Gut zum Halten: diese Mahlzeit passt gut in deine Tagesbilanz.")
+            st.success("Diese Mahlzeit passt gut in deine Tagesbilanz.")
         else:
             st.info("Achte beim Halten auf deine gesamte Tagesbilanz.")
 
     st.subheader("🧠 Kurze Einschätzung")
 
     if protein >= 25 and sugar <= 15:
-        st.success("Proteinreich und wenig Zucker")
+        st.success("Proteinreich und wenig Zucker.")
     elif sugar > 30:
-        st.warning("Viel Zucker")
+        st.warning("Viel Zucker.")
     else:
-        st.info("Sieht okay aus")
+        st.info("Sieht okay aus.")
 
 st.subheader("💾 Mahlzeiten speichern")
 
@@ -230,13 +224,56 @@ if st.button("➕ Mahlzeit speichern", key="save_btn"):
         st.success("Mahlzeit gespeichert! ✅")
 
 df = st.session_state["data_df"]
-
 df_anzeige = df[[col for col in STANDARD_COLUMNS if col in df.columns]]
 
 if not df_anzeige.empty:
     st.subheader("📊 Gespeicherte Mahlzeiten")
 
     st.dataframe(df_anzeige, use_container_width=True)
+
+    df_heute = df_anzeige.copy()
+    df_heute["timestamp"] = pd.to_datetime(df_heute["timestamp"], errors="coerce")
+    heute = pd.Timestamp.now().date()
+    df_heute = df_heute[df_heute["timestamp"].dt.date == heute]
+
+    st.subheader("📈 Heute gegessen vs. Tagesziel")
+
+    if not df_heute.empty:
+        heute_kcal = df_heute["Kalorien"].sum()
+        heute_protein = df_heute["Protein"].sum()
+
+        col1, col2, col3 = st.columns(3)
+        col1.metric("🔥 Heute Kalorien", f"{heute_kcal:.0f} kcal")
+        col2.metric("💪 Heute Protein", f"{heute_protein:.1f} g")
+        col3.metric("🍽️ Mahlzeiten heute", len(df_heute))
+
+        kalorien_fortschritt = min(heute_kcal / kalorien_ziel, 1.0)
+        protein_fortschritt = min(heute_protein / protein_ziel, 1.0)
+
+        st.write(f"Kalorien heute: {heute_kcal:.0f} / {kalorien_ziel:.0f} kcal")
+        st.progress(kalorien_fortschritt)
+
+        st.write(f"Protein heute: {heute_protein:.1f} / {protein_ziel:.0f} g")
+        st.progress(protein_fortschritt)
+
+        st.subheader("💡 Empfehlung für heute")
+
+        if heute_kcal > kalorien_ziel * 1.1:
+            st.warning("Du liegst heute über deinem Kalorienziel. Achte bei weiteren Mahlzeiten auf leichtere Optionen.")
+        elif heute_kcal < kalorien_ziel * 0.7:
+            st.info("Du hast heute noch Kalorien offen. Eine ausgewogene weitere Mahlzeit wäre sinnvoll.")
+        else:
+            st.success("Deine Kalorien liegen heute gut im Zielbereich.")
+
+        if heute_protein < protein_ziel * 0.7:
+            st.info("Dein Protein ist heute noch eher niedrig. Proteinreiche Lebensmittel könnten helfen.")
+        else:
+            st.success("Dein Protein liegt heute gut im Bereich.")
+
+    else:
+        st.info("Für heute wurden noch keine Mahlzeiten gespeichert.")
+
+    st.subheader("📊 Statistik aller gespeicherten Mahlzeiten")
 
     total_kcal = df_anzeige["Kalorien"].sum()
     avg_kcal = df_anzeige["Kalorien"].mean()
@@ -246,17 +283,6 @@ if not df_anzeige.empty:
     col1.metric("🔥 Gesamt Kalorien", f"{total_kcal:.0f} kcal")
     col2.metric("📊 Durchschnitt Kalorien", f"{avg_kcal:.0f} kcal")
     col3.metric("💪 Gesamt Protein", f"{total_protein:.1f} g")
-
-    st.subheader("📈 Fortschritt zu deinen Tageszielen")
-
-    kalorien_fortschritt = min(total_kcal / kalorien_ziel, 1.0)
-    protein_fortschritt = min(total_protein / protein_ziel, 1.0)
-
-    st.write(f"Kalorien: {total_kcal:.0f} / {kalorien_ziel:.0f} kcal")
-    st.progress(kalorien_fortschritt)
-
-    st.write(f"Protein: {total_protein:.1f} / {protein_ziel:.0f} g")
-    st.progress(protein_fortschritt)
 
     top_protein = df_anzeige.loc[df_anzeige["Protein"].idxmax()]
     st.info(
