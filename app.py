@@ -67,8 +67,7 @@ pg = st.navigation([
     pg_home,
     pg_profile,
     pg_nutrition,
-    pg_training
-    
+    pg_training  
 ])
 
 pg.run()
