@@ -16,7 +16,6 @@ GOAL_OPTIONS = ["Muskelaufbau", "Abnehmen", "Gesünder & fitter werden"]
 LEVEL_OPTIONS = ["Anfänger", "Mittelstufe", "Fortgeschritten"]
 TRAININGDAY_OPTIONS = [3, 4, 5]
 
-# Profil laden und als Standardwerte verwenden
 profile_df = data_manager.load_user_data(
     "profile.csv",
     initial_value=pd.DataFrame()
@@ -225,6 +224,54 @@ prozent = round((erledigt_count / gesamt) * 100) if gesamt > 0 else 0
 st.progress(erledigt_count / gesamt if gesamt > 0 else 0)
 st.write(f"Du hast **{erledigt_count} von {gesamt} Trainingstagen** geschafft.")
 st.metric("📈 Wochenfortschritt", f"{prozent}%")
+
+st.divider()
+
+st.subheader("🏅 Motivation & Badges")
+
+try:
+    df_for_badges = progress_manager.load_progress()
+except Exception:
+    df_for_badges = pd.DataFrame(columns=[
+        "timestamp",
+        "goal",
+        "level",
+        "training_days",
+        "day_name",
+        "completed"
+    ])
+
+if not df_for_badges.empty and "completed" in df_for_badges.columns:
+    erledigt_badges_df = df_for_badges[df_for_badges["completed"] == True].copy()
+    erledigte_gesamt = len(erledigt_badges_df)
+
+    if erledigte_gesamt == 0:
+        badge = "Noch kein Badge"
+        motivation = "Starte mit deinem ersten Training und speichere deinen Fortschritt."
+    elif erledigte_gesamt < 5:
+        badge = "🏁 Starter"
+        motivation = "Sehr guter Anfang! Bleib dran und sammle weitere Trainings."
+    elif erledigte_gesamt < 15:
+        badge = "🔥 Dranbleiber"
+        motivation = "Stark! Du trainierst bereits regelmäßig."
+    else:
+        badge = "💪 Trainingsmaschine"
+        motivation = "Mega! Du hast schon viele Trainings geschafft."
+
+    col_b1, col_b2 = st.columns(2)
+    col_b1.metric("✅ Erledigte Trainings insgesamt", erledigte_gesamt)
+    col_b2.metric("🏅 Aktueller Badge", badge)
+
+    st.info(motivation)
+
+    if erledigt_count == gesamt and gesamt > 0:
+        st.success("Wochenziel erreicht! Du hast alle geplanten Trainings dieser Woche geschafft 🎉")
+    elif erledigt_count > 0:
+        st.info("Du bist diese Woche schon aktiv gewesen. Mach weiter so 🔥")
+    else:
+        st.warning("Noch kein Training diese Woche abgehakt. Heute ist ein guter Start!")
+else:
+    st.info("Noch keine Trainingsdaten vorhanden. Speichere dein erstes Training, um Badges zu sammeln.")
 
 st.divider()
 
