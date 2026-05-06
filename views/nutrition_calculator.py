@@ -8,6 +8,22 @@ data_manager = DataManager(
     fs_root_folder="Informatik_2_App"
 )
 
+STANDARD_COLUMNS = [
+    "timestamp",
+    "Name",
+    "Portion (g)",
+    "Kalorien",
+    "Protein",
+    "Fett",
+    "Kohlenhydrate",
+    "Zucker",
+    "Ballaststoffe",
+    "Mahlzeit-Typ",
+    "Ziel",
+    "Lecker-Score",
+    "Notiz"
+]
+
 st.title("🥗 Nährwert Rechner")
 
 st.write("""
@@ -15,25 +31,10 @@ Mit diesem Rechner kannst du die Nährwerte deiner Mahlzeit berechnen.
 Gib Lebensmittelmengen ein und berechne Kalorien, Protein, Zucker und Fett.
 """)
 
-# Falls data_df noch nicht existiert, vorbereiten
 if "data_df" not in st.session_state:
     st.session_state["data_df"] = data_manager.load_user_data(
         "data.csv",
-        initial_value=pd.DataFrame(columns=[
-            "timestamp",
-            "Name",
-            "Portion (g)",
-            "Kalorien",
-            "Protein",
-            "Fett",
-            "Kohlenhydrate",
-            "Zucker",
-            "Ballaststoffe",
-            "Mahlzeit-Typ",
-            "Ziel",
-            "Lecker-Score",
-            "Notiz"
-        ]),
+        initial_value=pd.DataFrame(columns=STANDARD_COLUMNS),
         parse_dates=["timestamp"]
     )
 
@@ -107,15 +108,6 @@ if submitted:
 
     st.bar_chart(chart_df, x="Makro", y="Gramm")
 
-    st.subheader("🔥 Kalorienbewertung")
-
-    if calories < 400:
-        st.success("Leichte Mahlzeit")
-    elif calories < 800:
-        st.info("Normale Mahlzeit")
-    else:
-        st.warning("Sehr kalorienreich")
-
     st.subheader("🎯 Empfehlung passend zum Ziel")
 
     if goal == "Abnehmen":
@@ -161,34 +153,39 @@ if st.button("➕ Mahlzeit speichern", key="save_btn"):
         data_manager.save_user_data(st.session_state["data_df"], "data.csv")
         st.success("Mahlzeit gespeichert! ✅")
 
-if not st.session_state["data_df"].empty:
+df = st.session_state["data_df"]
+
+# Nur neue deutsche Spalten anzeigen, alte englische Spalten ausblenden
+df_anzeige = df[[col for col in STANDARD_COLUMNS if col in df.columns]]
+
+if not df_anzeige.empty:
     st.subheader("📊 Gespeicherte Mahlzeiten")
 
-    df = st.session_state["data_df"]
+    st.dataframe(df_anzeige, use_container_width=True)
 
-    st.dataframe(df)
-
-    total_kcal = df["Kalorien"].sum()
-    avg_kcal = df["Kalorien"].mean()
+    total_kcal = df_anzeige["Kalorien"].sum()
+    avg_kcal = df_anzeige["Kalorien"].mean()
 
     col1, col2 = st.columns(2)
     col1.metric("🔥 Gesamt Kalorien", f"{total_kcal:.0f} kcal")
     col2.metric("📊 Durchschnitt Kalorien", f"{avg_kcal:.0f} kcal")
 
-    if "Protein" in df.columns and not df["Protein"].empty:
-        top_protein = df.loc[df["Protein"].idxmax()]
-        st.info(f"🏆 Proteinreichste Mahlzeit: {top_protein['Name']} ({top_protein['Protein']} g Protein)")
+    top_protein = df_anzeige.loc[df_anzeige["Protein"].idxmax()]
+    st.info(
+        f"🏆 Proteinreichste Mahlzeit: "
+        f"{top_protein['Name']} ({top_protein['Protein']} g Protein)"
+    )
 
     col3, col4 = st.columns(2)
 
     with col3:
         if st.button("Liste leeren"):
-            st.session_state["data_df"] = pd.DataFrame(columns=df.columns)
+            st.session_state["data_df"] = pd.DataFrame(columns=STANDARD_COLUMNS)
             data_manager.save_user_data(st.session_state["data_df"], "data.csv")
             st.rerun()
 
     with col4:
-        csv = df.to_csv(index=False)
+        csv = df_anzeige.to_csv(index=False)
 
         st.download_button(
             "CSV exportieren",
