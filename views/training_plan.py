@@ -24,28 +24,20 @@ trainingstage_anzahl = st.selectbox(
 
 st.subheader("Dein Trainingsplan")
 
+# Trainingspläne
 if ziel == "Muskelaufbau":
-    st.write("Fokus: Krafttraining und Muskelaufbau")
-
     if trainingstage_anzahl == 3:
         trainingsplan = {
             "Montag: Rücken & Arme": ["Rücken", "Arme"],
-            "Dienstag: Pause": [],
             "Mittwoch: Beine & Po": ["Beine", "Po"],
-            "Donnerstag: Pause": [],
             "Freitag: Bauch & Ganzkörper": ["Bauch", "Beine", "Rücken"],
-            "Samstag: Optional Cardio": [],
-            "Sonntag: Pause": []
         }
     elif trainingstage_anzahl == 4:
         trainingsplan = {
             "Montag: Rücken": ["Rücken"],
             "Dienstag: Beine & Po": ["Beine", "Po"],
-            "Mittwoch: Pause": [],
             "Donnerstag: Arme & Bauch": ["Arme", "Bauch"],
-            "Freitag: Pause": [],
             "Samstag: Ganzkörper": ["Beine", "Rücken", "Po"],
-            "Sonntag: Pause": []
         }
     else:
         trainingsplan = {
@@ -54,66 +46,43 @@ if ziel == "Muskelaufbau":
             "Mittwoch: Arme & Bauch": ["Arme", "Bauch"],
             "Donnerstag: Po": ["Po"],
             "Freitag: Ganzkörper": ["Beine", "Rücken", "Bauch"],
-            "Samstag: Pause": [],
-            "Sonntag: Pause": []
         }
 
 elif ziel == "Abnehmen":
-    st.write("Fokus: Ganzkörpertraining und Kalorienverbrauch")
-
     if trainingstage_anzahl == 3:
         trainingsplan = {
             "Montag: Beine & Bauch": ["Beine", "Bauch"],
-            "Dienstag: Cardio": [],
             "Mittwoch: Rücken & Po": ["Rücken", "Po"],
-            "Donnerstag: Pause": [],
             "Freitag: Ganzkörper": ["Beine", "Rücken", "Bauch", "Po"],
-            "Samstag: Cardio": [],
-            "Sonntag: Pause": []
         }
     elif trainingstage_anzahl == 4:
         trainingsplan = {
             "Montag: Ganzkörper": ["Beine", "Rücken", "Bauch"],
-            "Dienstag: Cardio": [],
             "Mittwoch: Beine & Po": ["Beine", "Po"],
-            "Donnerstag: Pause": [],
             "Freitag: Bauch & Rücken": ["Bauch", "Rücken"],
             "Samstag: Ganzkörper": ["Beine", "Po", "Bauch"],
-            "Sonntag: Pause": []
         }
     else:
         trainingsplan = {
             "Montag: Ganzkörper": ["Beine", "Rücken", "Bauch"],
             "Dienstag: Beine & Po": ["Beine", "Po"],
-            "Mittwoch: Cardio": [],
             "Donnerstag: Rücken & Bauch": ["Rücken", "Bauch"],
             "Freitag: Ganzkörper": ["Beine", "Po", "Arme"],
-            "Samstag: Optional Cardio": [],
-            "Sonntag: Pause": []
         }
 
 else:
-    st.write("Fokus: allgemeine Fitness")
-
     if trainingstage_anzahl == 3:
         trainingsplan = {
             "Montag: Oberkörper": ["Rücken", "Arme"],
-            "Dienstag: Pause": [],
             "Mittwoch: Unterkörper": ["Beine", "Po"],
-            "Donnerstag: Mobility": [],
             "Freitag: Core": ["Bauch", "Beine"],
-            "Samstag: Optional Bewegung": [],
-            "Sonntag: Pause": []
         }
     elif trainingstage_anzahl == 4:
         trainingsplan = {
             "Montag: Oberkörper": ["Rücken", "Arme"],
             "Dienstag: Unterkörper": ["Beine", "Po"],
-            "Mittwoch: Pause": [],
             "Donnerstag: Core": ["Bauch"],
-            "Freitag: Pause": [],
             "Samstag: Ganzkörper": ["Beine", "Rücken", "Bauch"],
-            "Sonntag: Pause": []
         }
     else:
         trainingsplan = {
@@ -121,36 +90,32 @@ else:
             "Dienstag: Beine": ["Beine"],
             "Mittwoch: Bauch": ["Bauch"],
             "Donnerstag: Arme": ["Arme"],
-            "Freitag: Po & Ganzkörper": ["Po", "Beine", "Rücken"],
-            "Samstag: Pause": [],
-            "Sonntag: Pause": []
+            "Freitag: Ganzkörper": ["Po", "Beine", "Rücken"],
         }
 
-trainingstage = {
-    tag: muskelgruppen
-    for tag, muskelgruppen in trainingsplan.items()
-    if muskelgruppen
-}
-
-erledigt_count = 0
+# Session-State für Checkboxen
+if "checkbox_states" not in st.session_state:
+    st.session_state["checkbox_states"] = {}
 
 st.subheader("Fortschritt diese Woche")
 
-for tag in trainingstage:
-    gespeicherter_status = progress_manager.get_latest_status(
-        ziel,
-        level,
-        trainingstage_anzahl,
-        tag
-    )
+for tag in trainingsplan:
+    key = f"{ziel}_{level}_{trainingstage_anzahl}_{tag}"
 
-    erledigt = st.checkbox(
+    if key not in st.session_state["checkbox_states"]:
+        st.session_state["checkbox_states"][key] = False
+
+    st.session_state["checkbox_states"][key] = st.checkbox(
         f"{tag} erledigt",
-        value=gespeicherter_status,
-        key=f"{ziel}_{level}_{trainingstage_anzahl}_{tag}"
+        value=st.session_state["checkbox_states"][key]
     )
 
-    if erledigt != gespeicherter_status:
+# BUTTON zum Speichern
+if st.button("💾 Fortschritt speichern"):
+    for tag in trainingsplan:
+        key = f"{ziel}_{level}_{trainingstage_anzahl}_{tag}"
+        erledigt = st.session_state["checkbox_states"][key]
+
         progress_manager.update_day(
             ziel,
             level,
@@ -159,90 +124,50 @@ for tag in trainingstage:
             erledigt
         )
 
-    if erledigt:
-        erledigt_count += 1
+    st.success("Fortschritt gespeichert! ✅")
 
-gesamt = len(trainingstage)
+# Fortschritt anzeigen
+erledigt_count = sum(st.session_state["checkbox_states"].values())
+gesamt = len(trainingsplan)
 
 st.progress(erledigt_count / gesamt)
 st.write(f"Du hast **{erledigt_count} von {gesamt} Trainingstagen** geschafft.")
 
-if erledigt_count == gesamt:
-    st.success("Stark! Du hast alle geplanten Trainings geschafft 💪")
-elif erledigt_count > 0:
-    st.info("Guter Fortschritt! Bleib dran 🔥")
-else:
-    st.warning("Noch kein Training erledigt. Starte mit dem ersten Training!")
-
-st.divider()
-
+# Tabelle anzeigen
 st.subheader("📊 Gespeicherte Trainingsfortschritte")
 
-progress_df = progress_manager.load_progress()
+df = progress_manager.load_progress()
 
-if progress_df.empty:
-    st.info("Noch keine Trainingsfortschritte gespeichert.")
-else:
-    progress_anzeige = progress_df.copy()
-
-    progress_anzeige = progress_anzeige.rename(columns={
+if not df.empty:
+    df = df.rename(columns={
         "timestamp": "Datum",
         "goal": "Ziel",
         "level": "Fitnesslevel",
-        "training_days": "Trainingstage pro Woche",
+        "training_days": "Trainingstage",
         "day_name": "Trainingstag",
         "completed": "Erledigt"
     })
 
-    progress_anzeige["Erledigt"] = progress_anzeige["Erledigt"].replace({
-        True: "Ja",
-        False: "Nein"
-    })
+    df["Erledigt"] = df["Erledigt"].map({True: "Ja", False: "Nein"})
 
-    st.dataframe(progress_anzeige, use_container_width=True)
+    st.dataframe(df, use_container_width=True)
 
-    erledigte_trainings = progress_df[progress_df["completed"] == True]
+    st.metric("Gespeicherte Trainings", len(df))
 
-    col1, col2 = st.columns(2)
-
-    col1.metric("✅ Gespeicherte erledigte Trainings", len(erledigte_trainings))
-    col2.metric("📌 Alle gespeicherten Einträge", len(progress_df))
-
-    if not erledigte_trainings.empty:
-        beliebtestes_ziel = erledigte_trainings["goal"].mode()[0]
-        st.info(f"🏆 Häufigstes Trainingsziel: {beliebtestes_ziel}")
-
-    csv = progress_anzeige.to_csv(index=False)
-
-    st.download_button(
-        "Trainingsfortschritt als CSV exportieren",
-        csv,
-        "trainingsfortschritt.csv",
-        "text/csv"
-    )
-
-    if st.button("Trainingsfortschritt löschen"):
-        empty_df = pd.DataFrame(columns=[
-            "timestamp",
-            "goal",
-            "level",
-            "training_days",
-            "day_name",
-            "completed"
-        ])
-        progress_manager.save_progress(empty_df)
+    if st.button("🗑 Fortschritt löschen"):
+        progress_manager.save_progress(pd.DataFrame())
         st.rerun()
+
+else:
+    st.info("Noch keine Daten vorhanden.")
 
 st.divider()
 
+# Trainingsplan anzeigen
 st.subheader("📅 Wochenplan")
 
 for tag, muskelgruppen in trainingsplan.items():
     st.markdown(f"### {tag}")
-
-    if not muskelgruppen:
-        st.write("Ruhetag / Erholung")
-        continue
 
     passende_uebungen = [
         ex for ex in EXERCISES
