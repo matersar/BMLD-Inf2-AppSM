@@ -228,128 +228,6 @@ st.metric("📈 Wochenfortschritt", f"{prozent}%")
 st.divider()
 
 st.subheader("🏅 Motivation & Badges")
-from datetime import datetime
-
-try:
-    df_for_badges = progress_manager.load_progress()
-except Exception:
-    df_for_badges = pd.DataFrame(columns=[
-        "timestamp",
-        "goal",
-        "level",
-        "training_days",
-        "day_name",
-        "completed"
-    ])
-
-if not df_for_badges.empty and "completed" in df_for_badges.columns:
-
-    erledigt_badges_df = df_for_badges[
-        df_for_badges["completed"] == True
-    ].copy()
-
-    erledigte_gesamt = len(erledigt_badges_df)
-
-    # BADGES
-    if erledigte_gesamt == 0:
-        badge = "Noch kein Badge"
-        motivation = "Starte mit deinem ersten Training und speichere deinen Fortschritt."
-
-    elif erledigte_gesamt < 5:
-        badge = "🏁 Starter"
-        motivation = "Sehr guter Anfang! Bleib dran und sammle weitere Trainings."
-
-    elif erledigte_gesamt < 15:
-        badge = "🔥 Dranbleiber"
-        motivation = "Stark! Du trainierst bereits regelmäßig."
-
-    else:
-        badge = "💪 Trainingsmaschine"
-        motivation = "Mega! Du hast schon viele Trainings geschafft."
-
-    # STREAK SYSTEM
-    streak = 0
-
-    try:
-        erledigt_badges_df["timestamp"] = pd.to_datetime(
-            erledigt_badges_df["timestamp"]
-        )
-
-        erledigt_badges_df["datum"] = (
-            erledigt_badges_df["timestamp"].dt.date
-        )
-
-        einzigartige_tage = sorted(
-            erledigt_badges_df["datum"].unique(),
-            reverse=True
-        )
-
-        if len(einzigartige_tage) > 0:
-
-            letzter_tag = einzigartige_tage[0]
-            streak = 1
-
-            for i in range(1, len(einzigartige_tage)):
-
-                differenz = (
-                    einzigartige_tage[i - 1] -
-                    einzigartige_tage[i]
-                ).days
-
-                if differenz == 1:
-                    streak += 1
-                else:
-                    break
-
-    except Exception:
-        streak = 0
-
-    # KPIs
-    col_b1, col_b2, col_b3 = st.columns(3)
-
-    col_b1.metric(
-        "✅ Trainings insgesamt",
-        erledigte_gesamt
-    )
-
-    col_b2.metric(
-        "🏅 Badge",
-        badge
-    )
-
-    col_b3.metric(
-        "🔥 Streak",
-        f"{streak} Tage"
-    )
-
-    st.info(motivation)
-
-    # STREAK FEEDBACK
-    if streak >= 7:
-        st.success(
-            "🔥 Unglaublich! Du trainierst seit 7 Tagen oder mehr in Folge!"
-        )
-
-    elif streak >= 3:
-        st.success(
-            f"🔥 Stark! Du bist seit {streak} Tagen aktiv."
-        )
-
-    elif streak >= 1:
-        st.info(
-            "💪 Gute Arbeit! Halte deine Trainingsroutine aufrecht."
-        )
-
-    # WOCHENZIEL
-    if erledigt_count == gesamt and gesamt > 0:
-        st.success(
-            "🎉 Wochenziel erreicht! Alle geplanten Trainings geschafft."
-        )
-
-else:
-    st.info(
-        "Noch keine Trainingsdaten vorhanden. Speichere dein erstes Training."
-    )
 
 try:
     df_for_badges = progress_manager.load_progress()
@@ -380,14 +258,47 @@ if not df_for_badges.empty and "completed" in df_for_badges.columns:
         badge = "💪 Trainingsmaschine"
         motivation = "Mega! Du hast schon viele Trainings geschafft."
 
-    col_b1, col_b2 = st.columns(2)
-    col_b1.metric("✅ Erledigte Trainings insgesamt", erledigte_gesamt)
-    col_b2.metric("🏅 Aktueller Badge", badge)
+    streak = 0
+
+    try:
+        erledigt_badges_df["timestamp"] = pd.to_datetime(erledigt_badges_df["timestamp"])
+        erledigt_badges_df["datum"] = erledigt_badges_df["timestamp"].dt.date
+
+        einzigartige_tage = sorted(
+            erledigt_badges_df["datum"].unique(),
+            reverse=True
+        )
+
+        if len(einzigartige_tage) > 0:
+            streak = 1
+
+            for i in range(1, len(einzigartige_tage)):
+                differenz = (einzigartige_tage[i - 1] - einzigartige_tage[i]).days
+
+                if differenz == 1:
+                    streak += 1
+                else:
+                    break
+
+    except Exception:
+        streak = 0
+
+    col_b1, col_b2, col_b3 = st.columns(3)
+    col_b1.metric("✅ Trainings insgesamt", erledigte_gesamt)
+    col_b2.metric("🏅 Badge", badge)
+    col_b3.metric("🔥 Streak", f"{streak} Tage")
 
     st.info(motivation)
 
+    if streak >= 7:
+        st.success("🔥 Unglaublich! Du trainierst seit 7 Tagen oder mehr in Folge!")
+    elif streak >= 3:
+        st.success(f"🔥 Stark! Du bist seit {streak} Tagen aktiv.")
+    elif streak >= 1:
+        st.info("💪 Gute Arbeit! Halte deine Trainingsroutine aufrecht.")
+
     if erledigt_count == gesamt and gesamt > 0:
-        st.success("Wochenziel erreicht! Du hast alle geplanten Trainings dieser Woche geschafft 🎉")
+        st.success("🎉 Wochenziel erreicht! Alle geplanten Trainings geschafft.")
     elif erledigt_count > 0:
         st.info("Du bist diese Woche schon aktiv gewesen. Mach weiter so 🔥")
     else:
