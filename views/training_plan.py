@@ -20,25 +20,27 @@ st.subheader("Dein Trainingsplan")
 
 if ziel == "Muskelaufbau":
     fokus_text = "Fokus: Krafttraining und Muskelaufbau"
-    zielwerte = {
-        "protein_min": 25,
-        "protein_max": 50,
-        "kalorien_min": 600,
-        "kalorien_max": 900,
-    }
+    zielwerte = {"protein_min": 25, "protein_max": 50, "kalorien_min": 600, "kalorien_max": 900}
 
     if trainingstage_anzahl == 3:
         trainingsplan = {
             "Montag: Rücken & Arme": ["Rücken", "Arme"],
+            "Dienstag: Pause": [],
             "Mittwoch: Beine & Po": ["Beine", "Po"],
+            "Donnerstag: Pause": [],
             "Freitag: Bauch & Ganzkörper": ["Bauch", "Beine", "Rücken"],
+            "Samstag: Optional Cardio": [],
+            "Sonntag: Pause": [],
         }
     elif trainingstage_anzahl == 4:
         trainingsplan = {
             "Montag: Rücken": ["Rücken"],
             "Dienstag: Beine & Po": ["Beine", "Po"],
+            "Mittwoch: Pause": [],
             "Donnerstag: Arme & Bauch": ["Arme", "Bauch"],
+            "Freitag: Pause": [],
             "Samstag: Ganzkörper": ["Beine", "Rücken", "Po"],
+            "Sonntag: Pause": [],
         }
     else:
         trainingsplan = {
@@ -47,59 +49,68 @@ if ziel == "Muskelaufbau":
             "Mittwoch: Arme & Bauch": ["Arme", "Bauch"],
             "Donnerstag: Po": ["Po"],
             "Freitag: Ganzkörper": ["Beine", "Rücken", "Bauch"],
+            "Samstag: Pause": [],
+            "Sonntag: Pause": [],
         }
 
 elif ziel == "Abnehmen":
     fokus_text = "Fokus: Ganzkörpertraining und Kalorienverbrauch"
-    zielwerte = {
-        "protein_min": 20,
-        "protein_max": 40,
-        "kalorien_min": 350,
-        "kalorien_max": 650,
-    }
+    zielwerte = {"protein_min": 20, "protein_max": 40, "kalorien_min": 350, "kalorien_max": 650}
 
     if trainingstage_anzahl == 3:
         trainingsplan = {
             "Montag: Beine & Bauch": ["Beine", "Bauch"],
+            "Dienstag: Cardio": [],
             "Mittwoch: Rücken & Po": ["Rücken", "Po"],
+            "Donnerstag: Pause": [],
             "Freitag: Ganzkörper": ["Beine", "Rücken", "Bauch", "Po"],
+            "Samstag: Cardio": [],
+            "Sonntag: Pause": [],
         }
     elif trainingstage_anzahl == 4:
         trainingsplan = {
             "Montag: Ganzkörper": ["Beine", "Rücken", "Bauch"],
+            "Dienstag: Cardio": [],
             "Mittwoch: Beine & Po": ["Beine", "Po"],
+            "Donnerstag: Pause": [],
             "Freitag: Bauch & Rücken": ["Bauch", "Rücken"],
             "Samstag: Ganzkörper": ["Beine", "Po", "Bauch"],
+            "Sonntag: Pause": [],
         }
     else:
         trainingsplan = {
             "Montag: Ganzkörper": ["Beine", "Rücken", "Bauch"],
             "Dienstag: Beine & Po": ["Beine", "Po"],
+            "Mittwoch: Cardio": [],
             "Donnerstag: Rücken & Bauch": ["Rücken", "Bauch"],
             "Freitag: Ganzkörper": ["Beine", "Po", "Arme"],
+            "Samstag: Optional Cardio": [],
+            "Sonntag: Pause": [],
         }
 
 else:
     fokus_text = "Fokus: allgemeine Fitness"
-    zielwerte = {
-        "protein_min": 20,
-        "protein_max": 45,
-        "kalorien_min": 450,
-        "kalorien_max": 750,
-    }
+    zielwerte = {"protein_min": 20, "protein_max": 45, "kalorien_min": 450, "kalorien_max": 750}
 
     if trainingstage_anzahl == 3:
         trainingsplan = {
             "Montag: Oberkörper": ["Rücken", "Arme"],
+            "Dienstag: Pause": [],
             "Mittwoch: Unterkörper": ["Beine", "Po"],
+            "Donnerstag: Mobility": [],
             "Freitag: Core": ["Bauch", "Beine"],
+            "Samstag: Optional Bewegung": [],
+            "Sonntag: Pause": [],
         }
     elif trainingstage_anzahl == 4:
         trainingsplan = {
             "Montag: Oberkörper": ["Rücken", "Arme"],
             "Dienstag: Unterkörper": ["Beine", "Po"],
+            "Mittwoch: Pause": [],
             "Donnerstag: Core": ["Bauch"],
+            "Freitag: Pause": [],
             "Samstag: Ganzkörper": ["Beine", "Rücken", "Bauch"],
+            "Sonntag: Pause": [],
         }
     else:
         trainingsplan = {
@@ -108,9 +119,17 @@ else:
             "Mittwoch: Bauch": ["Bauch"],
             "Donnerstag: Arme": ["Arme"],
             "Freitag: Ganzkörper": ["Po", "Beine", "Rücken"],
+            "Samstag: Pause": [],
+            "Sonntag: Pause": [],
         }
 
 st.write(fokus_text)
+
+trainingstage = {
+    tag: muskelgruppen
+    for tag, muskelgruppen in trainingsplan.items()
+    if muskelgruppen
+}
 
 if "checkbox_states" not in st.session_state:
     st.session_state["checkbox_states"] = {}
@@ -119,7 +138,7 @@ st.subheader("Fortschritt diese Woche")
 
 current_keys = []
 
-for tag in trainingsplan:
+for tag in trainingstage:
     key = f"{ziel}_{level}_{trainingstage_anzahl}_{tag}"
     current_keys.append(key)
 
@@ -133,7 +152,7 @@ for tag in trainingsplan:
     )
 
 if st.button("💾 Fortschritt speichern"):
-    for tag in trainingsplan:
+    for tag in trainingstage:
         key = f"{ziel}_{level}_{trainingstage_anzahl}_{tag}"
         erledigt = st.session_state["checkbox_states"][key]
 
@@ -148,10 +167,10 @@ if st.button("💾 Fortschritt speichern"):
     st.success("Fortschritt gespeichert! ✅")
 
 erledigt_count = sum(1 for key in current_keys if st.session_state["checkbox_states"][key])
-gesamt = len(trainingsplan)
-prozent = round((erledigt_count / gesamt) * 100)
+gesamt = len(trainingstage)
+prozent = round((erledigt_count / gesamt) * 100) if gesamt > 0 else 0
 
-st.progress(erledigt_count / gesamt)
+st.progress(erledigt_count / gesamt if gesamt > 0 else 0)
 st.write(f"Du hast **{erledigt_count} von {gesamt} Trainingstagen** geschafft.")
 st.metric("📈 Wochenfortschritt", f"{prozent}%")
 
@@ -167,13 +186,11 @@ if not nutrition_df.empty and "Protein" in nutrition_df.columns and "Kalorien" i
 
     st.subheader("🎯 Zielbereiche pro Mahlzeit")
 
-    zielbereich_df = pd.DataFrame([
-        {
-            "Ziel": ziel,
-            "Protein-Zielbereich": f"{zielwerte['protein_min']}–{zielwerte['protein_max']} g",
-            "Kalorien-Zielbereich": f"{zielwerte['kalorien_min']}–{zielwerte['kalorien_max']} kcal",
-        }
-    ])
+    zielbereich_df = pd.DataFrame([{
+        "Ziel": ziel,
+        "Protein-Zielbereich": f"{zielwerte['protein_min']}–{zielwerte['protein_max']} g",
+        "Kalorien-Zielbereich": f"{zielwerte['kalorien_min']}–{zielwerte['kalorien_max']} kcal",
+    }])
 
     st.dataframe(zielbereich_df, use_container_width=True, hide_index=True)
 
@@ -182,38 +199,20 @@ if not nutrition_df.empty and "Protein" in nutrition_df.columns and "Kalorien" i
     def bewertung_wert(wert, minimum, maximum):
         if wert < minimum:
             return "zu niedrig"
-        elif wert > maximum:
+        if wert > maximum:
             return "zu hoch"
-        else:
-            return "im Zielbereich"
+        return "im Zielbereich"
 
-    protein_status = bewertung_wert(
-        avg_protein,
-        zielwerte["protein_min"],
-        zielwerte["protein_max"]
-    )
-
-    kalorien_status = bewertung_wert(
-        avg_calories,
-        zielwerte["kalorien_min"],
-        zielwerte["kalorien_max"]
-    )
+    protein_status = bewertung_wert(avg_protein, zielwerte["protein_min"], zielwerte["protein_max"])
+    kalorien_status = bewertung_wert(avg_calories, zielwerte["kalorien_min"], zielwerte["kalorien_max"])
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.metric(
-            "💪 Ø Protein pro Mahlzeit",
-            f"{avg_protein:.1f} g",
-            protein_status
-        )
+        st.metric("💪 Ø Protein pro Mahlzeit", f"{avg_protein:.1f} g", protein_status)
 
     with col2:
-        st.metric(
-            "🔥 Ø Kalorien pro Mahlzeit",
-            f"{avg_calories:.0f} kcal",
-            kalorien_status
-        )
+        st.metric("🔥 Ø Kalorien pro Mahlzeit", f"{avg_calories:.0f} kcal", kalorien_status)
 
     def berechne_score(wert, minimum, maximum):
         mitte = (minimum + maximum) / 2
@@ -226,18 +225,8 @@ if not nutrition_df.empty and "Protein" in nutrition_df.columns and "Kalorien" i
         score = max(0, 100 - ((abstand - toleranz) / toleranz) * 50)
         return min(score, 100)
 
-    protein_score = berechne_score(
-        avg_protein,
-        zielwerte["protein_min"],
-        zielwerte["protein_max"]
-    )
-
-    kalorien_score = berechne_score(
-        avg_calories,
-        zielwerte["kalorien_min"],
-        zielwerte["kalorien_max"]
-    )
-
+    protein_score = berechne_score(avg_protein, zielwerte["protein_min"], zielwerte["protein_max"])
+    kalorien_score = berechne_score(avg_calories, zielwerte["kalorien_min"], zielwerte["kalorien_max"])
     gesamt_score = round((protein_score + kalorien_score) / 2)
 
     if gesamt_score >= 80:
@@ -266,7 +255,6 @@ if not nutrition_df.empty and "Protein" in nutrition_df.columns and "Kalorien" i
         st.warning("Deine Kalorien sind für dieses Ziel zu hoch. Eine kleinere Portion wäre sinnvoll.")
     else:
         st.info("Deine Ernährung ist solide, kann aber noch genauer an dein Ziel angepasst werden.")
-
 else:
     st.info("Noch keine Ernährungsdaten vorhanden.")
 
@@ -351,7 +339,6 @@ if not df.empty:
             "completed"
         ]))
         st.rerun()
-
 else:
     st.info("Noch keine Daten vorhanden.")
 
@@ -361,6 +348,10 @@ st.subheader("📅 Wochenplan")
 
 for tag, muskelgruppen in trainingsplan.items():
     st.markdown(f"### {tag}")
+
+    if not muskelgruppen:
+        st.write("Ruhetag / Erholung")
+        continue
 
     passende_uebungen = [
         ex for ex in EXERCISES
