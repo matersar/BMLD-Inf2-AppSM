@@ -62,12 +62,20 @@ pg_profile = st.Page(
     icon=":material/person:"
 )
 
+# ANALYSE
+pg_analysis = st.Page(
+    "views/analysis.py",
+    title="Analyse",
+    icon=":material/analytics:"
+)
+
 # Navigation
 pg = st.navigation([
     pg_home,
     pg_profile,
     pg_nutrition,
-    pg_training  
+    pg_training,
+    pg_analysis 
 ])
 
 pg.run()
