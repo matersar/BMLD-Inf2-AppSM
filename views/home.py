@@ -3,6 +3,8 @@ import pandas as pd
 from utils.data_manager import DataManager
 from utils.progress_manager import ProgressManager
 
+st.set_page_config(page_title="FitPlan Dashboard", page_icon="🏠")
+
 st.title("🏠 FitPlan Dashboard")
 
 data_manager = DataManager(
@@ -12,13 +14,13 @@ data_manager = DataManager(
 
 progress_manager = ProgressManager()
 
-st.write("""
-Willkommen bei **FitPlan** 💪  
-Diese App unterstützt dich dabei, dein persönliches Fitnessziel besser zu erreichen. 
-Du kannst dein Profil anlegen, Mahlzeiten speichern, Trainingspläne erstellen, Fortschritte verfolgen 
-und sehen, ob deine Ernährung zu deinem Trainingsziel passt.
+st.markdown("""
+### Willkommen bei **FitPlan** 💪
 
-Bleib dran – jeder gespeicherte Fortschritt bringt dich deinem Ziel einen Schritt näher! 🔥
+FitPlan verbindet **Profil, Ernährung, Training und Fortschritt** in einer App.  
+Du kannst dein persönliches Ziel festlegen, Mahlzeiten speichern, Trainingspläne nutzen und deine Entwicklung verfolgen.
+
+**Dein Ziel:** kleine Schritte, regelmäßig dranbleiben und langfristig fitter werden. 🔥
 """)
 
 profile_df = data_manager.load_user_data("profile.csv", initial_value=pd.DataFrame())
@@ -32,6 +34,10 @@ except Exception:
     ])
 
 st.divider()
+
+# =========================
+# PROFIL
+# =========================
 
 st.subheader("👤 Profilübersicht")
 
@@ -47,16 +53,17 @@ if not profile_df.empty:
 
     bmi = gewicht / ((groesse / 100) ** 2)
 
-    st.write(f"Hallo **{name}** 👋 Schön, dass du wieder da bist!")
+    st.success(f"Hallo **{name}** 👋 Schön, dass du wieder da bist!")
 
     col1, col2, col3 = st.columns(3)
     col1.metric("🎯 Ziel", ziel)
-    col2.metric("🏋️ Level", level)
-    col3.metric("📅 Trainingstage", f"{trainingstage}/Woche")
+    col2.metric("🏋️ Fitnesslevel", level)
+    col3.metric("📅 Trainingsplan", f"{trainingstage} Tage/Woche")
 
-    col4, col5 = st.columns(2)
+    col4, col5, col6 = st.columns(3)
     col4.metric("⚖️ Gewicht", f"{gewicht} kg")
-    col5.metric("🧠 BMI", f"{bmi:.1f}")
+    col5.metric("📏 Größe", f"{groesse} cm")
+    col6.metric("🧠 BMI", f"{bmi:.1f}")
 
     if bmi < 18.5:
         st.warning("BMI-Bewertung: Untergewicht")
@@ -71,6 +78,10 @@ else:
 
 st.divider()
 
+# =========================
+# TRAINING
+# =========================
+
 st.subheader("🏋️ Trainingsfortschritt")
 
 if not progress_df.empty and "completed" in progress_df.columns:
@@ -78,31 +89,35 @@ if not progress_df.empty and "completed" in progress_df.columns:
     erledigte_trainings = len(erledigt_df)
     alle_eintraege = len(progress_df)
 
-    col1, col2 = st.columns(2)
-    col1.metric("✅ Erledigte Trainings", erledigte_trainings)
-    col2.metric("📌 Gespeicherte Einträge", alle_eintraege)
-
     if erledigte_trainings < 5:
         user_level = "Anfänger"
+        badge = "🏁 Starter"
     elif erledigte_trainings < 15:
         user_level = "Mittelstufe"
+        badge = "🔥 Dranbleiber"
     else:
         user_level = "Fortgeschritten"
+        badge = "💪 Trainingsmaschine"
 
-    st.metric("🏅 Trainings-Level", user_level)
+    col1, col2, col3 = st.columns(3)
+    col1.metric("✅ Erledigte Trainings", erledigte_trainings)
+    col2.metric("📌 Gespeicherte Einträge", alle_eintraege)
+    col3.metric("🏅 Badge", badge)
+
+    st.metric("📈 Trainings-Level", user_level)
 
     if not erledigt_df.empty and "timestamp" in erledigt_df.columns:
-        erledigt_df["timestamp"] = pd.to_datetime(erledigt_df["timestamp"])
+        erledigt_df["timestamp"] = pd.to_datetime(erledigt_df["timestamp"], errors="coerce")
+        erledigt_df = erledigt_df.dropna(subset=["timestamp"])
         erledigt_df = erledigt_df.sort_values("timestamp")
-        erledigt_df["Tag"] = range(1, len(erledigt_df) + 1)
+        erledigt_df["Training Nr."] = range(1, len(erledigt_df) + 1)
 
-        line_data = erledigt_df[["Tag"]].copy()
+        line_data = erledigt_df[["Training Nr."]].copy()
         line_data["Erledigte Trainings"] = range(1, len(erledigt_df) + 1)
 
-        st.subheader("📈 Fortschritt über Zeit")
-        st.line_chart(line_data, x="Tag", y="Erledigte Trainings")
-
-        st.caption("Die Nummern auf der X-Achse zeigen deine gespeicherten Trainingstage in Reihenfolge.")
+        st.subheader("📈 Trainingsentwicklung")
+        st.line_chart(line_data, x="Training Nr.", y="Erledigte Trainings")
+        st.caption("Die X-Achse nummeriert deine gespeicherten erledigten Trainings.")
 
     if not erledigt_df.empty:
         st.subheader("📋 Letzte Trainingseinträge")
@@ -125,17 +140,23 @@ else:
 
 st.divider()
 
+# =========================
+# ERNÄHRUNG
+# =========================
+
 st.subheader("🥗 Ernährungsübersicht")
 
 if not nutrition_df.empty and "Kalorien" in nutrition_df.columns:
     total_kcal = nutrition_df["Kalorien"].sum()
     avg_kcal = nutrition_df["Kalorien"].mean()
     avg_protein = nutrition_df["Protein"].mean()
+    meals_count = len(nutrition_df)
 
-    col1, col2, col3 = st.columns(3)
-    col1.metric("🔥 Gesamt Kalorien", f"{total_kcal:.0f} kcal")
-    col2.metric("📊 Ø Kalorien", f"{avg_kcal:.0f} kcal")
-    col3.metric("💪 Ø Protein", f"{avg_protein:.1f} g")
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("🍽️ Mahlzeiten", meals_count)
+    col2.metric("🔥 Gesamt Kalorien", f"{total_kcal:.0f} kcal")
+    col3.metric("📊 Ø Kalorien", f"{avg_kcal:.0f} kcal")
+    col4.metric("💪 Ø Protein", f"{avg_protein:.1f} g")
 
     letzte_mahlzeit = nutrition_df.iloc[-1]
 
@@ -147,18 +168,22 @@ if not nutrition_df.empty and "Kalorien" in nutrition_df.columns:
 
     if "timestamp" in nutrition_df.columns:
         nutrition_chart = nutrition_df.copy()
-        nutrition_chart["timestamp"] = pd.to_datetime(nutrition_chart["timestamp"])
+        nutrition_chart["timestamp"] = pd.to_datetime(nutrition_chart["timestamp"], errors="coerce")
+        nutrition_chart = nutrition_chart.dropna(subset=["timestamp"])
         nutrition_chart = nutrition_chart.sort_values("timestamp")
-        nutrition_chart["Tag"] = range(1, len(nutrition_chart) + 1)
+        nutrition_chart["Mahlzeit Nr."] = range(1, len(nutrition_chart) + 1)
 
         st.subheader("📈 Kalorienverlauf")
-        st.line_chart(nutrition_chart, x="Tag", y="Kalorien")
-        st.caption("Die Nummern zeigen deine gespeicherten Mahlzeiten in Reihenfolge.")
-
+        st.line_chart(nutrition_chart, x="Mahlzeit Nr.", y="Kalorien")
+        st.caption("Die X-Achse nummeriert deine gespeicherten Mahlzeiten.")
 else:
     st.info("Noch keine Mahlzeiten gespeichert.")
 
 st.divider()
+
+# =========================
+# MOTIVATION
+# =========================
 
 st.subheader("🔥 Motivation")
 
