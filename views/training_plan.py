@@ -448,13 +448,16 @@ if not df.empty:
 
         chart_df = erledigt_chart_df[["Training Nr.", "Kumulierte Trainings"]]
 
-        st.line_chart(
-            chart_df,
-            x="Training Nr.",
-            y="Kumulierte Trainings"
-        )
+        if len(chart_df) >= 2:
+            st.line_chart(
+                chart_df,
+                x="Training Nr.",
+                y="Kumulierte Trainings"
+            )
 
-        st.caption("Die Linie zeigt deine insgesamt erledigten Trainings im Zeitverlauf.")
+            st.caption("Die Linie zeigt deine insgesamt erledigten Trainings im Zeitverlauf.")
+        else:
+            st.info("Für eine sichtbare Linie brauchst du mindestens 2 erledigte Trainings.")
     else:
         st.info("Noch keine erledigten Trainings vorhanden.")
 
@@ -484,20 +487,28 @@ st.divider()
 
 st.subheader("📅 Wochenplan")
 
-for tag, muskelgruppen in trainingsplan.items():
-    st.markdown(f"### {tag}")
+if level == "Mittelstufe":
+    erlaubte_level = ["Anfänger", "Fortgeschritten"]
+else:
+    erlaubte_level = [level]
 
+for tag, muskelgruppen in trainingsplan.items():
     if not muskelgruppen:
-        st.write("Ruhetag / Erholung")
+        with st.expander(f"{tag}"):
+            st.write("Ruhetag / Erholung")
         continue
 
-    passende_uebungen = [
-        ex for ex in EXERCISES
-        if ex["muskelgruppe"] in muskelgruppen and ex["level"] == level
-    ]
+    with st.expander(f"{tag}"):
+        passende_uebungen = [
+            ex for ex in EXERCISES
+            if ex["muskelgruppe"] in muskelgruppen and ex["level"] in erlaubte_level
+        ]
 
-    for ex in passende_uebungen[:5]:
-        st.markdown(
-            f"- **{ex['name']}** ({ex['muskelgruppe']}) – "
-            f"{ex['saetze']} Sätze x {ex['wiederholungen']}"
-        )
+        if not passende_uebungen:
+            st.info("Für diesen Tag wurden keine passenden Übungen gefunden.")
+        else:
+            for ex in passende_uebungen[:5]:
+                st.markdown(
+                    f"- **{ex['name']}** ({ex['muskelgruppe']}) – "
+                    f"{ex['saetze']} Sätze x {ex['wiederholungen']}"
+                )
