@@ -436,19 +436,25 @@ if not df.empty:
     col2.metric("📌 Alle Einträge", len(df))
     col3.metric("🏅 Dein Level", user_level)
 
-    st.subheader("📈 Fortschritt nach Ziel")
+    st.subheader("📈 Trainingsfortschritt über Zeit")
 
-    chart_data = (
-        df.groupby(["goal", "completed"])
-        .size()
-        .reset_index(name="Anzahl")
-    )
+    erledigt_chart_df = df[df["completed"] == True].copy()
 
-    chart_data = chart_data[chart_data["completed"] == True]
-    chart_data = chart_data.rename(columns={"goal": "Ziel"})
+    if not erledigt_chart_df.empty:
+        erledigt_chart_df = erledigt_chart_df.reset_index(drop=True)
 
-    if not chart_data.empty:
-        st.bar_chart(chart_data, x="Ziel", y="Anzahl")
+        erledigt_chart_df["Training Nr."] = range(1, len(erledigt_chart_df) + 1)
+        erledigt_chart_df["Kumulierte Trainings"] = range(1, len(erledigt_chart_df) + 1)
+
+        chart_df = erledigt_chart_df[["Training Nr.", "Kumulierte Trainings"]]
+
+        st.line_chart(
+            chart_df,
+            x="Training Nr.",
+            y="Kumulierte Trainings"
+        )
+
+        st.caption("Die Linie zeigt deine insgesamt erledigten Trainings im Zeitverlauf.")
     else:
         st.info("Noch keine erledigten Trainings vorhanden.")
 
