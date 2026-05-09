@@ -182,13 +182,6 @@ if not progress_df.empty and "completed" in progress_df.columns:
         line_data = erledigt_df[["Training Nr."]].copy()
         line_data["Erledigte Trainings"] = range(1, len(erledigt_df) + 1)
 
-        if len(line_data) >= 2:
-            st.subheader("📈 Trainingsentwicklung")
-            st.line_chart(line_data, x="Training Nr.", y="Erledigte Trainings")
-            st.caption("Die X-Achse nummeriert deine gespeicherten erledigten Trainings.")
-        else:
-            st.info("Für eine sichtbare Trainingslinie brauchst du mindestens 2 erledigte Trainings.")
-
     if not erledigt_df.empty:
         st.subheader("📋 Letzte Trainingseinträge")
 
@@ -251,14 +244,6 @@ if not nutrition_df.empty and "Kalorien" in nutrition_df.columns:
         nutrition_chart = nutrition_chart.sort_values("timestamp")
         nutrition_chart["Mahlzeit Nr."] = range(1, len(nutrition_chart) + 1)
 
-        if len(nutrition_chart) >= 2:
-            st.subheader("📈 Kalorienverlauf")
-            st.line_chart(nutrition_chart, x="Mahlzeit Nr.", y="Kalorien")
-            st.caption("Die X-Achse nummeriert deine gespeicherten Mahlzeiten.")
-        else:
-            st.info("Für eine sichtbare Kalorienlinie brauchst du mindestens 2 gespeicherte Mahlzeiten.")
-else:
-    st.info("Noch keine Mahlzeiten gespeichert.")
 
 st.divider()
 
