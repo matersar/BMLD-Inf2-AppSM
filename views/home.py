@@ -52,10 +52,32 @@ else:
     st.info("Willkommen bei FitPlan! Fülle zuerst dein Profil aus, damit deine App personalisiert wird.")
 
 st.markdown("""
-### Dein persönlicher Fitness-Überblick
+### Dein persönlicher Fitness-Überblick 💪
 
-FitPlan verbindet **Profil, Ernährung, Training und Analyse** in einer App.  
-Du siehst hier deine wichtigsten Werte auf einen Blick und erkennst, wie gut du auf Kurs bist.
+Willkommen bei **FitPlan** – deiner persönlichen Fitness- und Ernährungs-App.  
+Die App unterstützt dich dabei, deine Ziele Schritt für Schritt strukturierter, motivierter und übersichtlicher zu erreichen.
+
+Mit FitPlan kannst du:
+
+✅ dein persönliches Fitnessprofil erstellen  
+✅ individuelle Trainingspläne nutzen  
+✅ deine Mahlzeiten und Makros speichern  
+✅ deinen Fortschritt analysieren  
+✅ Motivation durch Badges und Streaks erhalten  
+✅ deine Entwicklung langfristig verfolgen  
+
+Egal ob dein Ziel **Muskelaufbau**, **Abnehmen** oder einfach ein gesünderer Lebensstil ist –  
+FitPlan hilft dir dabei, deine Gewohnheiten sichtbar zu machen und konsequent dranzubleiben.
+
+Durch die Kombination aus **Training**, **Ernährung**, **Analyse** und **Fortschrittskontrolle** bekommst du einen klaren Überblick darüber:
+
+🔥 wie regelmäßig du trainierst  
+🥗 ob deine Ernährung zu deinem Ziel passt  
+📈 wie sich dein Fortschritt entwickelt  
+🏅 welche Erfolge du bereits erreicht hast  
+
+Kleine Schritte führen langfristig zu großen Ergebnissen.  
+Bleib konsequent, sammle Fortschritte und arbeite jeden Tag an der besten Version von dir selbst 🚀
 """)
 
 st.divider()
