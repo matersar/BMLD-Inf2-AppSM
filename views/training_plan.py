@@ -452,30 +452,34 @@ if not df.empty:
     col2.metric("📌 Alle Einträge", len(df))
     col3.metric("🏅 Dein Level", user_level)
 
-    st.subheader("📈 Trainingsfortschritt über Zeit")
+st.subheader("📈 Trainingsverlauf")
 
-    erledigt_chart_df = df[df["completed"] == True].copy()
+erledigt_chart_df = df[df["completed"] == True].copy()
 
-    if not erledigt_chart_df.empty:
-        erledigt_chart_df = erledigt_chart_df.reset_index(drop=True)
+if not erledigt_chart_df.empty:
+    erledigt_chart_df = erledigt_chart_df.reset_index(drop=True)
 
-        erledigt_chart_df["Training Nr."] = range(1, len(erledigt_chart_df) + 1)
-        erledigt_chart_df["Kumulierte Trainings"] = range(1, len(erledigt_chart_df) + 1)
+    erledigt_chart_df["Training Nr."] = range(1, len(erledigt_chart_df) + 1)
+    erledigt_chart_df["Erledigtes Training"] = 1
 
-        chart_df = erledigt_chart_df[["Training Nr.", "Kumulierte Trainings"]]
+    chart_df = erledigt_chart_df[["Training Nr.", "Erledigtes Training"]]
 
-        if len(chart_df) >= 2:
-            st.line_chart(
-                chart_df,
-                x="Training Nr.",
-                y="Kumulierte Trainings"
-            )
+    if len(chart_df) >= 2:
+        st.line_chart(
+            chart_df,
+            x="Training Nr.",
+            y="Erledigtes Training"
+        )
 
-            st.caption("Die Linie zeigt deine insgesamt erledigten Trainings im Zeitverlauf.")
-        else:
-            st.info("Für eine sichtbare Linie brauchst du mindestens 2 erledigte Trainings.")
+        st.caption(
+            "Dieses Diagramm zeigt deine erledigten Trainings in der Reihenfolge, "
+            "in der sie gespeichert wurden. Jeder Punkt steht für ein abgeschlossenes Training. "
+            "Die Linie verbindet die Einträge und zeigt, dass deine Trainingshistorie wächst."
+        )
     else:
-        st.info("Noch keine erledigten Trainings vorhanden.")
+        st.info("Für eine sichtbare Linie brauchst du mindestens 2 erledigte Trainings.")
+else:
+    st.info("Noch keine erledigten Trainings vorhanden.")
 
     csv = df_display.to_csv(index=False)
 
