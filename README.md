@@ -1,30 +1,99 @@
-# BMLD-Inf2-AppSM
+# 💪 FitPlan – Fitness & Ernährungs App
 
 ## Leistungsnachweis – Informatik 2 (BMLD/ZHAW), FS26
 
-## Streamlit App
+FitPlan ist eine interaktive Streamlit-App, welche Training, Ernährung, Analyse und Fortschritt in einer Anwendung verbindet.
 
-Diese App berechnet die Nährwerte einer Mahlzeit basierend auf eingegebenen Lebensmittelwerten pro 100g und einer Portionsgröße.
+Die App unterstützt Benutzer:innen dabei, ihre persönlichen Fitness- und Ernährungsziele besser zu verfolgen, Mahlzeiten auszuwerten, Trainingsfortschritte zu speichern und Entwicklungen langfristig sichtbar zu machen.
 
-## Features
+---
 
-- Nährwertberechnung pro Portion
-- Makronährstoff-Visualisierung (Balkendiagramm)
-- Makro-Verteilung als Pie Chart
-- Kalorienbewertung
-- Ernährungs-Einschätzung
-- Mahlzeiten speichern und vergleichen
-- Tabelle mit gespeicherten Mahlzeiten
-- Gesamt-Kalorien Berechnung
-- Durchschnittliche Kalorien Analyse
-- Proteinreichste Mahlzeit Anzeige
+# 🌐 Streamlit App
+
+https://bmld-inf2-appsm-jxzz7pmeirrag6tclp7xhu.streamlit.app/
+
+---
+
+# 🚀 Hauptfunktionen
+
+## 👤 Persönliches Profil
+- Speicherung persönlicher Daten
+- Fitnesslevel auswählen
+- Trainingsziel definieren
+- Anzahl Trainingstage pro Woche festlegen
+- BMI Berechnung und Bewertung
+
+## 🥗 Nährwert Rechner
+- Berechnung von Kalorien und Makronährstoffen pro Portion
+- Protein-, Fett-, Kohlenhydrat-, Zucker- und Ballaststoffanalyse
+- Persönliche Tagesziele für Kalorien, Protein und Wasser
+- Bewertung der Mahlzeiten passend zum Trainingsziel
+- Speicherung von Mahlzeiten
 - CSV Export der gespeicherten Daten
-- Liste gespeicherter Mahlzeiten löschen
 
-## Team
+## 🏋️ Trainingsplan
+- Automatisch generierte Trainingspläne
+- Unterschiedliche Trainingsziele:
+  - Muskelaufbau
+  - Abnehmen
+  - Gesünder & fitter werden
+- Trainingspläne für Anfänger, Mittelstufe und Fortgeschrittene
+- Übungen nach Muskelgruppen
+- Wochenfortschritt speichern
+- Motivation, Badges und Streak-System
+
+## 📊 Analyse
+- Auswertung gespeicherter Ernährungsdaten
+- Durchschnittliche Kalorien- und Proteinwerte
+- Trainingsanalyse
+- Automatische Empfehlungen und Bewertungen
+- Übersicht über Fortschritte und Entwicklung
+
+## 🏠 Dashboard
+- Zentrale Übersicht aller wichtigen Daten
+- Profilübersicht
+- Ernährungsübersicht
+- Trainingsübersicht
+- Motivation und Fortschrittsanzeige
+
+---
+
+# 🛠️ Verwendete Technologien
+
+- Python
+- Streamlit
+- Pandas
+- Altair
+- CSV Datenspeicherung
+- WebDAV Speicherung über SWITCH Drive
+
+---
+
+# 💾 Datenspeicherung
+
+Die Daten werden automatisch gespeichert:
+- Profilinformationen
+- Mahlzeiten
+- Trainingsfortschritte
+
+Die Speicherung erfolgt über WebDAV auf dem persönlichen SWITCH Drive.
+
+---
+
+# 🎯 Ziel der App
+
+Die App soll Benutzer:innen motivieren:
+- gesünder zu essen
+- regelmäßiger zu trainieren
+- Fortschritte sichtbar zu machen
+- persönliche Fitnessziele langfristig zu erreichen
+
+---
+
+# 👥 Team
 
 - Sarah Matera (matersar@students.zhaw.ch)
 - Jelena Radic (radicjel@students.zhaw.ch)
 - Jovana Pavlovic (pavlojov@students.zhaw.ch)
 
-
+---
