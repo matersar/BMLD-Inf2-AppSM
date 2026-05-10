@@ -8,78 +8,152 @@ Die App sollte Benutzer:innen dabei unterstützen:
 - ihre Ernährung besser zu verstehen,
 - Trainingsziele festzulegen,
 - Fortschritte sichtbar zu machen
-- und motiviert zu bleiben.
+- und langfristig motiviert zu bleiben.
 
-Wir wollten eine moderne und benutzerfreundliche Anwendung entwickeln, die nicht nur Daten berechnet, sondern auch motiviert und personalisierte Empfehlungen gibt.
-
----
-
-# Umsetzung
-
-Im Verlauf des Projekts wurde die App Schritt für Schritt erweitert.
-
-Zu Beginn bestand die Anwendung hauptsächlich aus einem einfachen Nährwertrechner. Danach wurden zusätzliche Funktionen integriert:
-
-- persönliches Benutzerprofil
-- automatische Trainingsplan-Erstellung
-- Trainingsfortschritt speichern
-- Dashboard mit Übersichten
-- Ernährungsanalyse
-- Badges und Motivationssystem
-- CSV Export
-- automatische Empfehlungen basierend auf Ziel und Gewicht
-- Datenspeicherung über WebDAV / SWITCH Drive
-
-Besonders wichtig war uns, dass die verschiedenen Bereiche miteinander verbunden sind. Dadurch übernimmt die App beispielsweise automatisch Informationen aus dem Profil für Ernährung und Training.
+Dabei wollten wir nicht nur einfache Berechnungen anzeigen, sondern eine moderne und personalisierte Anwendung entwickeln, welche Daten analysiert und verständliche Rückmeldungen gibt.
 
 ---
 
-# Herausforderungen
+## Umsetzung der App
 
-Während des Projekts gab es verschiedene Herausforderungen.
+Die Anwendung wurde mit Python und Streamlit umgesetzt. Zusätzlich nutzten wir pandas für die Datenanalyse und CSV-Dateien zur Speicherung der Benutzerdaten.
 
-Teilweise funktionierten Diagramme oder Datenspeicherungen nicht korrekt. Zudem mussten wir lernen, wie Daten zwischen mehreren Seiten einer Streamlit-App gespeichert und wieder geladen werden können.
+Die App besteht aus mehreren Bereichen:
 
-Auch die Arbeit mit Pandas, Session State und CSV-Dateien war anfangs anspruchsvoll. Zusätzlich war es wichtig, die App übersichtlich und benutzerfreundlich zu gestalten.
+### Dashboard
+Das Dashboard zeigt die wichtigsten Informationen auf einen Blick:
+- Profilübersicht
+- BMI
+- Trainingsfortschritt
+- Ernährungsübersicht
+- Motivation und Zusammenfassungen
 
-Ein weiterer schwieriger Punkt war die Verbindung von mehreren Funktionen in einer einzigen Anwendung, ohne dass Fehler entstehen.
+### Nährwertrechner
+Im Nährwertrechner können Benutzer:innen Mahlzeiten eingeben und die Nährwerte automatisch berechnen lassen.
+
+Zusätzlich werden:
+- Kalorien,
+- Protein,
+- Fett,
+- Zucker,
+- Kohlenhydrate
+- und Ballaststoffe
+
+analysiert und bewertet.
+
+Die App erstellt ausserdem persönliche Tagesziele basierend auf Gewicht, Ziel und Trainingshäufigkeit.
+
+### Trainingsplan
+Im Trainingsbereich kann ein individueller Trainingsplan erstellt werden.
+
+Die Trainingspläne passen sich an:
+- Fitnesslevel,
+- Ziel
+- und Anzahl Trainingstage
+
+an.
+
+Zusätzlich werden passende Übungen automatisch aus einer gespeicherten Übungsdatenbank angezeigt.
+
+### Analyse
+Die Analyse-Seite wertet die gespeicherten Daten aus und zeigt:
+- Diagramme,
+- Durchschnittswerte,
+- Protein- und Kalorienanalysen,
+- sowie automatische Empfehlungen.
+
+Dadurch können Benutzer:innen ihre Entwicklung besser nachvollziehen.
 
 ---
 
-# Was wir gelernt haben
+## Herausforderungen und Probleme
 
-Durch das Projekt haben wir viele praktische Erfahrungen gesammelt.
+Während der Entwicklung traten verschiedene Probleme auf.
 
-Wir haben gelernt:
-- mit Python und Streamlit zu arbeiten,
-- Daten mit Pandas zu analysieren,
-- interaktive Benutzeroberflächen zu erstellen,
-- Daten dauerhaft zu speichern,
-- GitHub für Versionskontrolle zu nutzen
-- und Probleme Schritt für Schritt zu lösen.
+Ein grösseres Problem war die Speicherung der Daten. Anfangs wurden CSV-Dateien teilweise leer gespeichert oder nicht korrekt geladen. Wir mussten deshalb unsere DataManager- und ProgressManager-Klassen mehrfach anpassen.
 
-Zusätzlich haben wir gelernt, wie wichtig saubere Struktur, Planung und Testing bei Softwareprojekten sind.
+Auch bei den Diagrammen gab es Schwierigkeiten. Teilweise wurden keine Linien angezeigt, obwohl Daten vorhanden waren. Das Problem lag an der Darstellung der Datenachsen und daran, dass die Daten zuerst korrekt numerisch verarbeitet werden mussten.
 
----
+Zusätzlich hatten wir Probleme mit:
+- Streamlit Session State,
+- GitHub Pushes,
+- Einrückungsfehlern in Python,
+- sowie Fehlern beim Deployment auf Streamlit Cloud.
 
-# Verbesserungsmöglichkeiten
-
-In Zukunft könnte die App noch weiter erweitert werden.
-
-Mögliche Erweiterungen wären:
-- Login-System mit mehreren Benutzer:innen
-- bessere Diagramme und Statistiken
-- KI-basierte Ernährungsempfehlungen
-- Kalorienverbrauch berechnen
-- mobile Optimierung
-- Dark/Light Mode Umschalter
-- größere Übungsdatenbank
-- Erinnerungsfunktionen und Benachrichtigungen
+Durch Debugging und schrittweises Testen konnten wir diese Probleme jedoch lösen.
 
 ---
 
-# Fazit
+## Technische Entscheidungen
 
-Insgesamt war das Projekt sehr lehrreich. Wir konnten theoretisches Wissen praktisch anwenden und eine vollständige interaktive Anwendung entwickeln.
+Wir entschieden uns bewusst für Streamlit, weil damit schnell interaktive Anwendungen entwickelt werden können.
 
-Die App verbindet Ernährung, Training und Motivation in einer übersichtlichen Plattform und zeigt, wie verschiedene Informatik-Konzepte gemeinsam genutzt werden können.
+CSV-Dateien wurden statt einer Datenbank verwendet, da:
+- die Anwendung dadurch einfacher bleibt,
+- keine externe Datenbank benötigt wird,
+- und die Daten lokal bzw. über WebDAV gespeichert werden können.
+
+Die Aufteilung in mehrere Seiten war ebenfalls eine wichtige Entscheidung, damit die App übersichtlich bleibt.
+
+---
+
+## Zusammenarbeit im Team
+
+Die Arbeit im Team funktionierte insgesamt gut.
+
+Wir tauschten Ideen aus, testeten Funktionen gegenseitig und halfen uns bei Problemen. Besonders wichtig war die Kommunikation bei Fehlern und beim Zusammenführen der verschiedenen Funktionen.
+
+Die Aufgaben wurden untereinander verteilt, beispielsweise:
+- Dashboard,
+- Trainingsbereich,
+- Dokumentation,
+- oder Analysefunktionen.
+
+Dadurch konnten wir effizienter arbeiten.
+
+---
+
+## Was wir gelernt haben
+
+Durch dieses Projekt konnten wir unser Wissen in Python deutlich erweitern.
+
+Wir lernten unter anderem:
+- mit pandas Daten auszuwerten,
+- interaktive Streamlit-Apps zu entwickeln,
+- GitHub zu verwenden,
+- Dateien automatisch zu speichern,
+- Diagramme zu erstellen,
+- und Fehler systematisch zu beheben.
+
+Zusätzlich verbesserten wir unser Verständnis für:
+- Benutzerfreundlichkeit,
+- Strukturierung von Code,
+- und die Planung grösserer Anwendungen.
+
+---
+
+## Verbesserungsmöglichkeiten
+
+In Zukunft könnte die App noch erweitert werden.
+
+Mögliche Verbesserungen wären:
+- Login-System mit Benutzerkonten,
+- echte Datenbank statt CSV-Dateien,
+- Kalorientracker über mehrere Tage,
+- genauere Ernährungsanalysen,
+- Fortschrittsgrafiken mit mehr Optionen,
+- oder Trainingsvideos zu Übungen.
+
+Auch das Design könnte weiter verbessert und noch moderner gestaltet werden.
+
+---
+
+## Fazit
+
+Insgesamt war das Projekt eine sehr wertvolle Erfahrung.
+
+Wir konnten theoretisches Wissen praktisch anwenden und lernten, wie viel Planung, Testen und Problemlösung hinter einer funktionierenden Anwendung steckt.
+
+Besonders spannend war es zu sehen, wie aus einer einfachen Idee Schritt für Schritt eine vollständige Fitness- und Ernährungs-App entstand.
+
+Das Projekt half uns nicht nur unsere Programmierkenntnisse zu verbessern, sondern auch unsere Fähigkeiten in Teamarbeit, Problemlösung und Projektorganisation weiterzuentwickeln.
