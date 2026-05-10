@@ -417,7 +417,23 @@ if not df.empty:
         "completed": "Erledigt"
     })
 
+    df_display["Datum"] = pd.to_datetime(
+        df_display["Datum"],
+        errors="coerce"
+    ).dt.strftime("%d.%m.%Y %H:%M")
+
     df_display["Erledigt"] = df_display["Erledigt"].map({True: "Ja", False: "Nein"})
+
+    sichtbare_spalten = [
+        "Datum",
+        "Ziel",
+        "Fitnesslevel",
+        "Trainingstage",
+        "Trainingstag",
+        "Erledigt"
+    ]
+
+    df_display = df_display[[col for col in sichtbare_spalten if col in df_display.columns]]
 
     st.dataframe(df_display, use_container_width=True)
 
