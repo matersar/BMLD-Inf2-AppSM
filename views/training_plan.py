@@ -453,7 +453,7 @@ if not df.empty:
     col2.metric("📌 Alle Einträge", len(df))
     col3.metric("🏅 Dein Level", user_level)
 
-        st.subheader("📈 Trainingsverlauf")
+    st.subheader("📈 Trainingsverlauf")
 
     erledigt_chart_df = df[df["completed"] == True].copy()
 
