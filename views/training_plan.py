@@ -460,20 +460,22 @@ if not df.empty:
         erledigt_chart_df = erledigt_chart_df.reset_index(drop=True)
 
         erledigt_chart_df["Training Nr."] = range(1, len(erledigt_chart_df) + 1)
-        erledigt_chart_df["Erledigtes Training"] = 1
+        erledigt_chart_df["Gesamt erledigte Trainings"] = range(1, len(erledigt_chart_df) + 1)
 
-        chart_df = erledigt_chart_df[["Training Nr.", "Erledigtes Training"]]
+        chart_df = erledigt_chart_df[["Training Nr.", "Gesamt erledigte Trainings"]]
 
         if len(chart_df) >= 2:
             st.line_chart(
                 chart_df,
                 x="Training Nr.",
-                y="Erledigtes Training"
+                y="Gesamt erledigte Trainings"
             )
 
             st.caption(
-                "Dieses Diagramm zeigt deine erledigten Trainings in der Reihenfolge, "
-                "in der sie gespeichert wurden. Jeder Punkt steht für ein abgeschlossenes Training."
+                "Dieses Diagramm zeigt deinen Trainingsfortschritt über Zeit. "
+                "Die X-Achse zeigt die Reihenfolge deiner gespeicherten Trainings. "
+                "Die Y-Achse zeigt, wie viele Trainings du insgesamt erledigt hast. "
+                "Wenn die Linie steigt, bedeutet das: Du hast weitere Trainings abgeschlossen."
             )
         else:
             st.info("Für eine sichtbare Linie brauchst du mindestens 2 erledigte Trainings.")
