@@ -102,7 +102,7 @@ with st.form("nutrition_form"):
     fiber_100 = st.number_input("Ballaststoffe pro 100g", value=3.0)
 
     meal_type = st.selectbox(
-        "Mahlzeit Typ",
+        "Mahlzeit-Typ",
         ["Frühstück", "Mittagessen", "Abendessen", "Snack"]
     )
 
@@ -160,14 +160,14 @@ if submitted:
     col5.metric("Kohlenhydrate", f"{carbs:.1f} g")
     col6.metric("Ballaststoffe", f"{fiber:.1f} g")
 
-    st.subheader("📈 Makros als Diagramm")
+    st.subheader("📈 Nährwerte als Diagramm")
 
     chart_df = pd.DataFrame({
-        "Makro": ["Protein", "Fett", "Kohlenhydrate", "Zucker", "Ballaststoffe"],
+        "Nährwert": ["Protein", "Fett", "Kohlenhydrate", "Zucker", "Ballaststoffe"],
         "Gramm": [protein, fat, carbs, sugar, fiber]
     })
 
-    st.bar_chart(chart_df, x="Makro", y="Gramm")
+    st.bar_chart(chart_df, x="Nährwert", y="Gramm")
 
     st.subheader("🎯 Bewertung dieser Mahlzeit")
 
@@ -224,12 +224,43 @@ if st.button("➕ Mahlzeit speichern", key="save_btn"):
         st.success("Mahlzeit gespeichert! ✅")
 
 df = st.session_state["data_df"]
-df_anzeige = df[[col for col in STANDARD_COLUMNS if col in df.columns]]
+df_anzeige = df[[col for col in STANDARD_COLUMNS if col in df.columns]].copy()
 
 if not df_anzeige.empty:
     st.subheader("📊 Gespeicherte Mahlzeiten")
 
-    st.dataframe(df_anzeige, use_container_width=True)
+    df_tabelle = df_anzeige.copy()
+    df_tabelle["timestamp"] = pd.to_datetime(df_tabelle["timestamp"], errors="coerce")
+    df_tabelle["Datum"] = df_tabelle["timestamp"].dt.strftime("%d.%m.%Y %H:%M")
+
+    df_tabelle = df_tabelle.rename(columns={
+        "Kalorien": "Kalorien (kcal)",
+        "Protein": "Protein (g)",
+        "Fett": "Fett (g)",
+        "Kohlenhydrate": "Kohlenhydrate (g)",
+        "Zucker": "Zucker (g)",
+        "Ballaststoffe": "Ballaststoffe (g)"
+    })
+
+    sichtbare_spalten = [
+        "Datum",
+        "Name",
+        "Portion (g)",
+        "Kalorien (kcal)",
+        "Protein (g)",
+        "Fett (g)",
+        "Kohlenhydrate (g)",
+        "Zucker (g)",
+        "Ballaststoffe (g)",
+        "Mahlzeit-Typ",
+        "Ziel",
+        "Lecker-Score",
+        "Notiz"
+    ]
+
+    df_tabelle = df_tabelle[[col for col in sichtbare_spalten if col in df_tabelle.columns]]
+
+    st.dataframe(df_tabelle, use_container_width=True)
 
     df_heute = df_anzeige.copy()
     df_heute["timestamp"] = pd.to_datetime(df_heute["timestamp"], errors="coerce")
@@ -299,7 +330,7 @@ if not df_anzeige.empty:
             st.rerun()
 
     with col4:
-        csv = df_anzeige.to_csv(index=False)
+        csv = df_tabelle.to_csv(index=False)
 
         st.download_button(
             "CSV exportieren",
