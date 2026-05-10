@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 from utils.exercise_data import EXERCISES
 from utils.progress_manager import ProgressManager
 from utils.data_manager import DataManager
@@ -452,7 +453,7 @@ if not df.empty:
     col2.metric("📌 Alle Einträge", len(df))
     col3.metric("🏅 Dein Level", user_level)
 
-    st.subheader("📈 Trainingsverlauf")
+        st.subheader("📈 Trainingsverlauf")
 
     erledigt_chart_df = df[df["completed"] == True].copy()
 
@@ -465,11 +466,16 @@ if not df.empty:
         chart_df = erledigt_chart_df[["Training Nr.", "Gesamt erledigte Trainings"]]
 
         if len(chart_df) >= 2:
-            st.line_chart(
-                chart_df,
-                x="Training Nr.",
-                y="Gesamt erledigte Trainings"
+            chart = (
+                alt.Chart(chart_df)
+                .mark_line(point=True)
+                .encode(
+                    x=alt.X("Training Nr.:Q", title="Training Nr."),
+                    y=alt.Y("Gesamt erledigte Trainings:Q", title="Gesamt erledigte Trainings")
+                )
             )
+
+            st.altair_chart(chart, use_container_width=True)
 
             st.caption(
                 "Dieses Diagramm zeigt deinen Trainingsfortschritt über Zeit. "
