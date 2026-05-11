@@ -8,22 +8,24 @@ Die App unterstützt Benutzer:innen dabei, ihre persönlichen Fitness- und Ernä
 
 ---
 
-# 🌐 Streamlit App
+## 🌐 Streamlit App
 
-https://bmld-inf2-appsm-jxzz7pmeirrag6tclp7xhu.streamlit.app/
+[Zur Streamlit App](https://bmld-inf2-appsm-jxzz7pmeirrag6tclp7xhu.streamlit.app/)
 
 ---
 
-# 🚀 Hauptfunktionen
+## 🚀 Hauptfunktionen
 
-## 👤 Persönliches Profil
+### 👤 Persönliches Profil
+
 - Speicherung persönlicher Daten
 - Fitnesslevel auswählen
 - Trainingsziel definieren
 - Anzahl Trainingstage pro Woche festlegen
 - BMI Berechnung und Bewertung
 
-## 🥗 Nährwert Rechner
+### 🥗 Nährwert Rechner
+
 - Berechnung von Kalorien und Makronährstoffen pro Portion
 - Protein-, Fett-, Kohlenhydrat-, Zucker- und Ballaststoffanalyse
 - Persönliche Tagesziele für Kalorien, Protein und Wasser
@@ -31,7 +33,8 @@ https://bmld-inf2-appsm-jxzz7pmeirrag6tclp7xhu.streamlit.app/
 - Speicherung von Mahlzeiten
 - CSV Export der gespeicherten Daten
 
-## 🏋️ Trainingsplan
+### 🏋️ Trainingsplan
+
 - Automatisch generierte Trainingspläne
 - Unterschiedliche Trainingsziele:
   - Muskelaufbau
@@ -42,14 +45,16 @@ https://bmld-inf2-appsm-jxzz7pmeirrag6tclp7xhu.streamlit.app/
 - Wochenfortschritt speichern
 - Motivation, Badges und Streak-System
 
-## 📊 Analyse
+### 📊 Analyse
+
 - Auswertung gespeicherter Ernährungsdaten
 - Durchschnittliche Kalorien- und Proteinwerte
 - Trainingsanalyse
 - Automatische Empfehlungen und Bewertungen
 - Übersicht über Fortschritte und Entwicklung
 
-## 🏠 Dashboard
+### 🏠 Dashboard
+
 - Zentrale Übersicht aller wichtigen Daten
 - Profilübersicht
 - Ernährungsübersicht
@@ -58,20 +63,21 @@ https://bmld-inf2-appsm-jxzz7pmeirrag6tclp7xhu.streamlit.app/
 
 ---
 
-# 🛠️ Verwendete Technologien
+## 🛠️ Verwendete Technologien
 
 - Python
 - Streamlit
 - Pandas
 - Altair
 - CSV Datenspeicherung
-- WebDAV Speicherung über SWITCH Drive
+- WebDAV über SWITCH Drive
 
 ---
 
-# 💾 Datenspeicherung
+## 💾 Datenspeicherung
 
 Die Daten werden automatisch gespeichert:
+
 - Profilinformationen
 - Mahlzeiten
 - Trainingsfortschritte
@@ -80,9 +86,10 @@ Die Speicherung erfolgt über WebDAV auf dem persönlichen SWITCH Drive.
 
 ---
 
-# 🎯 Ziel der App
+## 🎯 Ziel der App
 
 Die App soll Benutzer:innen motivieren:
+
 - gesünder zu essen
 - regelmäßiger zu trainieren
 - Fortschritte sichtbar zu machen
@@ -90,10 +97,8 @@ Die App soll Benutzer:innen motivieren:
 
 ---
 
-# 👥 Team
+## 👥 Team
 
 - Sarah Matera (matersar@students.zhaw.ch)
 - Jelena Radic (radicjel@students.zhaw.ch)
 - Jovana Pavlovic (pavlojov@students.zhaw.ch)
-
----
