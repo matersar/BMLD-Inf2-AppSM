@@ -25,11 +25,12 @@ except Exception:
     ])
 
 # =========================
-# START / HERO
+# DATEN VORBEREITEN
 # =========================
 
 if not profile_df.empty:
     profile = profile_df.iloc[-1]
+
     name = profile["Name"]
     ziel = profile["Ziel"]
     level = profile["Fitnesslevel"]
@@ -37,9 +38,6 @@ if not profile_df.empty:
     gewicht = profile["Gewicht"]
     groesse = profile["Größe"]
     bmi = gewicht / ((groesse / 100) ** 2)
-
-    st.success(f"Hallo **{name}** 👋 Schön, dass du wieder da bist!")
-
 else:
     name = ""
     ziel = "Noch kein Ziel"
@@ -48,43 +46,6 @@ else:
     gewicht = 0
     groesse = 0
     bmi = None
-
-    st.info("Willkommen bei FitPlan! Fülle zuerst dein Profil aus, damit deine App personalisiert wird.")
-
-st.markdown("""
-### Dein persönlicher Fitness-Überblick 💪
-
-Willkommen bei **FitPlan** – deiner persönlichen Fitness- und Ernährungs-App.  
-Die App unterstützt dich dabei, deine Ziele Schritt für Schritt strukturierter, motivierter und übersichtlicher zu erreichen.
-
-Mit FitPlan kannst du:
-
-✅ dein persönliches Fitnessprofil erstellen  
-✅ individuelle Trainingspläne nutzen  
-✅ deine Mahlzeiten und Makros speichern  
-✅ deinen Fortschritt analysieren  
-✅ Motivation durch Badges und Streaks erhalten  
-✅ deine Entwicklung langfristig verfolgen  
-
-Egal ob dein Ziel **Muskelaufbau**, **Abnehmen** oder einfach ein gesünderer Lebensstil ist –  
-FitPlan hilft dir dabei, deine Gewohnheiten sichtbar zu machen und konsequent dranzubleiben.
-
-Durch die Kombination aus **Training**, **Ernährung**, **Analyse** und **Fortschrittskontrolle** bekommst du einen klaren Überblick darüber:
-
-🔥 wie regelmäßig du trainierst  
-🥗 ob deine Ernährung zu deinem Ziel passt  
-📈 wie sich dein Fortschritt entwickelt  
-🏅 welche Erfolge du bereits erreicht hast  
-
-Kleine Schritte führen langfristig zu großen Ergebnissen.  
-Bleib konsequent, sammle Fortschritte und arbeite jeden Tag an der besten Version von dir selbst 🚀
-""")
-
-st.divider()
-
-# =========================
-# TOP KPI ÜBERSICHT
-# =========================
 
 erledigt_df = pd.DataFrame()
 erledigte_trainings = 0
@@ -106,13 +67,107 @@ if not progress_df.empty and "completed" in progress_df.columns:
         badge = "💪 Trainingsmaschine"
 
 meals_count = 0
+total_kcal = 0
 avg_kcal = 0
 avg_protein = 0
 
 if not nutrition_df.empty and "Kalorien" in nutrition_df.columns:
     meals_count = len(nutrition_df)
+    total_kcal = nutrition_df["Kalorien"].sum()
     avg_kcal = nutrition_df["Kalorien"].mean()
     avg_protein = nutrition_df["Protein"].mean()
+
+# =========================
+# HERO
+# =========================
+
+if not profile_df.empty:
+    st.success(f"Hallo **{name}** 👋 Schön, dass du wieder da bist!")
+else:
+    st.info("Willkommen bei FitPlan! Fülle zuerst dein Profil aus, damit deine App personalisiert wird.")
+
+st.markdown("""
+## Dein persönlicher Fitness- und Ernährungsbegleiter 💪
+
+**FitPlan** hilft dir dabei, Training, Ernährung und Fortschritt an einem Ort zu verbinden.  
+Die App ist dafür gedacht, deine Ziele sichtbarer, strukturierter und motivierender zu machen.
+
+Mit FitPlan kannst du deine Mahlzeiten speichern, passende Trainingspläne nutzen, deinen Fortschritt verfolgen und erkennen, ob deine Ernährung zu deinem Ziel passt.
+
+### Was du mit FitPlan erreichen kannst
+
+- mehr Überblick über deine Ernährung
+- mehr Struktur im Training
+- bessere Einschätzung deiner Fortschritte
+- mehr Motivation durch Badges und Streaks
+- bessere Verbindung zwischen Ernährung und Trainingsziel
+
+Egal ob du **Muskeln aufbauen**, **abnehmen** oder einfach **gesünder und fitter werden** möchtest:  
+FitPlan unterstützt dich dabei, kleine Schritte regelmässig umzusetzen und langfristig dranzubleiben.
+""")
+
+st.divider()
+
+# =========================
+# FEATURE ÜBERSICHT
+# =========================
+
+st.subheader("✨ Was bietet FitPlan?")
+
+col_f1, col_f2, col_f3 = st.columns(3)
+
+with col_f1:
+    st.info("""
+    **👤 Profil**
+    
+    Speichere dein Ziel, Fitnesslevel, Gewicht und Trainingstage.
+    
+    Diese Angaben werden für Trainings- und Ernährungsempfehlungen verwendet.
+    """)
+
+with col_f2:
+    st.info("""
+    **🥗 Ernährung**
+    
+    Berechne Kalorien, Protein und weitere Nährwerte deiner Mahlzeiten.
+    
+    So erkennst du, ob deine Ernährung zu deinem Ziel passt.
+    """)
+
+with col_f3:
+    st.info("""
+    **🏋️ Training**
+    
+    Nutze einen Trainingsplan passend zu Ziel und Fitnesslevel.
+    
+    Fortschritte können gespeichert und ausgewertet werden.
+    """)
+
+col_f4, col_f5 = st.columns(2)
+
+with col_f4:
+    st.info("""
+    **📊 Analyse**
+    
+    Die App wertet deine gespeicherten Daten aus.
+    
+    Diagramme, Zielwerte und Empfehlungen machen deine Entwicklung sichtbar.
+    """)
+
+with col_f5:
+    st.info("""
+    **🔥 Motivation**
+    
+    Badges, Streaks und Fortschrittsanzeigen helfen dir, konsequent zu bleiben.
+    
+    Jeder gespeicherte Fortschritt zählt.
+    """)
+
+st.divider()
+
+# =========================
+# SCHNELLÜBERSICHT
+# =========================
 
 st.subheader("📌 Schnellübersicht")
 
@@ -129,7 +184,7 @@ st.divider()
 # PROFIL
 # =========================
 
-st.subheader("👤 Profil")
+st.subheader("👤 Profilübersicht")
 
 if not profile_df.empty:
     col1, col2, col3 = st.columns(3)
@@ -158,7 +213,7 @@ st.divider()
 # TRAINING
 # =========================
 
-st.subheader("🏋️ Training")
+st.subheader("🏋️ Trainingsübersicht")
 
 if not progress_df.empty and "completed" in progress_df.columns:
     if erledigte_trainings < 5:
@@ -177,10 +232,6 @@ if not progress_df.empty and "completed" in progress_df.columns:
         erledigt_df["timestamp"] = pd.to_datetime(erledigt_df["timestamp"], errors="coerce")
         erledigt_df = erledigt_df.dropna(subset=["timestamp"])
         erledigt_df = erledigt_df.sort_values("timestamp")
-        erledigt_df["Training Nr."] = range(1, len(erledigt_df) + 1)
-
-        line_data = erledigt_df[["Training Nr."]].copy()
-        line_data["Erledigte Trainings"] = range(1, len(erledigt_df) + 1)
 
     if not erledigt_df.empty:
         st.subheader("📋 Letzte Trainingseinträge")
@@ -215,14 +266,9 @@ st.divider()
 # ERNÄHRUNG
 # =========================
 
-st.subheader("🥗 Ernährung")
+st.subheader("🥗 Ernährungsübersicht")
 
 if not nutrition_df.empty and "Kalorien" in nutrition_df.columns:
-    total_kcal = nutrition_df["Kalorien"].sum()
-    avg_kcal = nutrition_df["Kalorien"].mean()
-    avg_protein = nutrition_df["Protein"].mean()
-    meals_count = len(nutrition_df)
-
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("🍽️ Mahlzeiten", meals_count)
     col2.metric("🔥 Gesamt Kalorien", f"{total_kcal:.0f} kcal")
@@ -236,14 +282,8 @@ if not nutrition_df.empty and "Kalorien" in nutrition_df.columns:
         f"mit **{letzte_mahlzeit['Kalorien']:.0f} kcal** "
         f"und **{letzte_mahlzeit['Protein']:.1f} g Protein**."
     )
-
-    if "timestamp" in nutrition_df.columns:
-        nutrition_chart = nutrition_df.copy()
-        nutrition_chart["timestamp"] = pd.to_datetime(nutrition_chart["timestamp"], errors="coerce")
-        nutrition_chart = nutrition_chart.dropna(subset=["timestamp"])
-        nutrition_chart = nutrition_chart.sort_values("timestamp")
-        nutrition_chart["Mahlzeit Nr."] = range(1, len(nutrition_chart) + 1)
-
+else:
+    st.info("Noch keine Mahlzeiten gespeichert.")
 
 st.divider()
 
@@ -257,13 +297,23 @@ if not profile_df.empty:
     if erledigte_trainings > 0 and meals_count > 0:
         st.success(
             "Stark! Du nutzt bereits Training und Ernährung zusammen. "
-            "Bleib konsequent – kleine Schritte führen langfristig zu großen Ergebnissen 💪"
+            "Deine gespeicherten Daten helfen dir, deine Entwicklung besser zu verstehen. "
+            "Bleib konsequent – kleine Schritte führen langfristig zu grossen Ergebnissen 💪"
         )
     elif erledigte_trainings > 0:
-        st.info("Du hast Trainingsfortschritte gespeichert. Ergänze jetzt noch deine Ernährung für eine bessere Analyse.")
+        st.info(
+            "Du hast bereits Trainingsfortschritte gespeichert. "
+            "Ergänze jetzt noch deine Ernährung, damit die App deine Entwicklung noch besser analysieren kann."
+        )
     elif meals_count > 0:
-        st.info("Du hast Mahlzeiten gespeichert. Speichere jetzt auch Trainingsfortschritte, um deine Entwicklung besser zu sehen.")
+        st.info(
+            "Du hast bereits Mahlzeiten gespeichert. "
+            "Speichere jetzt auch Trainingsfortschritte, um Ernährung und Training gemeinsam auszuwerten."
+        )
     else:
-        st.warning("Starte mit einer Mahlzeit oder einem Training. Heute ist ein guter Anfang!")
+        st.warning(
+            "Starte mit einer Mahlzeit oder einem Training. "
+            "Jeder gespeicherte Eintrag ist ein Schritt in Richtung deines Ziels."
+        )
 else:
     st.info("Fülle zuerst dein Profil aus, damit dein Dashboard personalisiert wird.")
