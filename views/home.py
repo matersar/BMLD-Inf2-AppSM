@@ -67,15 +67,15 @@ if not progress_df.empty and "completed" in progress_df.columns:
         badge = "💪 Trainingsmaschine"
 
 meals_count = 0
-total_kcal = 0
 avg_kcal = 0
 avg_protein = 0
+avg_fett = 0
 
 if not nutrition_df.empty and "Kalorien" in nutrition_df.columns:
     meals_count = len(nutrition_df)
-    total_kcal = nutrition_df["Kalorien"].sum()
     avg_kcal = nutrition_df["Kalorien"].mean()
-    avg_protein = nutrition_df["Protein"].mean()
+    avg_protein = nutrition_df["Protein"].mean() if "Protein" in nutrition_df.columns else 0
+    avg_fett = nutrition_df["Fett"].mean() if "Fett" in nutrition_df.columns else 0
 
 # =========================
 # HERO
@@ -270,10 +270,11 @@ st.subheader("🥗 Ernährungsübersicht")
 
 if not nutrition_df.empty and "Kalorien" in nutrition_df.columns:
     col1, col2, col3, col4 = st.columns(4)
+
     col1.metric("🍽️ Mahlzeiten", meals_count)
-    col2.metric("🔥 Gesamt Kalorien", f"{total_kcal:.0f} kcal")
-    col3.metric("📊 Ø Kalorien", f"{avg_kcal:.0f} kcal")
-    col4.metric("💪 Ø Protein", f"{avg_protein:.1f} g")
+    col2.metric("📊 Ø Kalorien", f"{avg_kcal:.0f} kcal")
+    col3.metric("💪 Ø Protein", f"{avg_protein:.1f} g")
+    col4.metric("🥑 Ø Fett", f"{avg_fett:.1f} g")
 
     letzte_mahlzeit = nutrition_df.iloc[-1]
 
