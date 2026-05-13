@@ -68,6 +68,17 @@ trainingstage_anzahl = st.selectbox(
     index=TRAININGDAY_OPTIONS.index(default_trainingstage)
 )
 
+trainingsort = st.selectbox(
+    "Wo möchtest du trainieren?",
+    ["Gym", "Home"],
+    key="trainingsort"
+)
+
+if trainingsort == "Gym":
+    st.info("🏋️ Gym: Übungen mit Geräten, Kabelzug, Maschinen oder Gewichten.")
+else:
+    st.info("🏠 Home: Übungen mit Körpergewicht oder wenig Material.")
+
 st.subheader("Dein Trainingsplan")
 
 if ziel == "Muskelaufbau":
@@ -191,7 +202,7 @@ st.subheader("Fortschritt diese Woche")
 current_keys = []
 
 for tag in trainingstage:
-    key = f"{ziel}_{level}_{trainingstage_anzahl}_{tag}"
+    key = f"{ziel}_{level}_{trainingstage_anzahl}_{trainingsort}_{tag}"
     current_keys.append(key)
 
     if key not in st.session_state["checkbox_states"]:
@@ -205,7 +216,7 @@ for tag in trainingstage:
 
 if st.button("💾 Fortschritt speichern"):
     for tag in trainingstage:
-        key = f"{ziel}_{level}_{trainingstage_anzahl}_{tag}"
+        key = f"{ziel}_{level}_{trainingstage_anzahl}_{trainingsort}_{tag}"
         erledigt = st.session_state["checkbox_states"][key]
 
         progress_manager.update_day(
@@ -453,7 +464,6 @@ if not df.empty:
     col2.metric("📌 Alle Einträge", len(df))
     col3.metric("🏅 Dein Level", user_level)
 
-
     csv = df_display.to_csv(index=False)
 
     st.download_button(
@@ -494,7 +504,9 @@ for tag, muskelgruppen in trainingsplan.items():
     with st.expander(f"{tag}"):
         passende_uebungen = [
             ex for ex in EXERCISES
-            if ex["muskelgruppe"] in muskelgruppen and ex["level"] in erlaubte_level
+            if ex["muskelgruppe"] in muskelgruppen
+            and ex["level"] in erlaubte_level
+            and ex.get("ort", "Gym") == trainingsort
         ]
 
         if not passende_uebungen:
@@ -502,6 +514,6 @@ for tag, muskelgruppen in trainingsplan.items():
         else:
             for ex in passende_uebungen[:5]:
                 st.markdown(
-                    f"- **{ex['name']}** ({ex['muskelgruppe']}) – "
+                    f"- **{ex['name']}** ({ex['muskelgruppe']} | {ex.get('ort', 'Gym')}) – "
                     f"{ex['saetze']} Sätze x {ex['wiederholungen']}"
                 )
