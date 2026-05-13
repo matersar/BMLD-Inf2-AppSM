@@ -490,19 +490,14 @@ st.divider()
 
 st.subheader("📅 Wochenplan")
 
-if level == "Mittelstufe":
-    erlaubte_level = ["Anfänger", "Fortgeschritten"]
-else:
-    erlaubte_level = [level]
-
 
 def cardio_empfehlung(level):
     if level == "Anfänger":
-        return "20–25 Minuten lockeres Cardio, z.B. Jogging, schnelles Gehen oder Velo."
+        return "20–25 Minuten lockeres Cardio: schnelles Gehen, leichtes Jogging oder Velo. Intensität: locker."
     elif level == "Mittelstufe":
-        return "30–40 Minuten Cardio, z.B. Jogging, Velo oder Crosstrainer."
+        return "30–40 Minuten Cardio: Jogging, Velo oder Crosstrainer. Intensität: mittel."
     else:
-        return "45–60 Minuten Cardio, z.B. Jogging, Velo oder Intervalltraining."
+        return "45–60 Minuten Cardio: Jogging, Velo oder Intervalltraining. Intensität: mittel bis hoch."
 
 
 def trainingsumfang(level, ziel):
@@ -514,9 +509,41 @@ def trainingsumfang(level, ziel):
         if ziel == "Muskelaufbau":
             return 4, "8–12", "mittel bis schwer"
         elif ziel == "Abnehmen":
-            return 3, "12–15", "mittel, kurze Pausen"
+            return 4, "12–15", "mittel bis hoch, kurze Pausen"
         else:
-            return 3, "10–15", "mittel bis schwer"
+            return 4, "10–15", "mittel bis schwer"
+
+
+def passende_uebungen_finden(muskelgruppe, level, trainingsort):
+    alle_passenden = [
+        ex for ex in EXERCISES
+        if ex["muskelgruppe"] == muskelgruppe
+        and ex.get("ort", "Gym") == trainingsort
+    ]
+
+    if level == "Anfänger":
+        ziel_anzahl = 3
+        level_reihenfolge = ["Anfänger", "Mittelstufe", "Fortgeschritten"]
+
+    elif level == "Mittelstufe":
+        ziel_anzahl = 3
+        level_reihenfolge = ["Mittelstufe", "Anfänger", "Fortgeschritten"]
+
+    else:
+        ziel_anzahl = 4
+        level_reihenfolge = ["Fortgeschritten", "Mittelstufe", "Anfänger"]
+
+    ausgewaehlt = []
+
+    for level_name in level_reihenfolge:
+        for ex in alle_passenden:
+            if ex["level"] == level_name and ex not in ausgewaehlt:
+                ausgewaehlt.append(ex)
+
+            if len(ausgewaehlt) == ziel_anzahl:
+                return ausgewaehlt
+
+    return ausgewaehlt
 
 
 saetze_empfohlen, wiederholungen_empfohlen, intensitaet = trainingsumfang(level, ziel)
@@ -540,19 +567,23 @@ for tag, muskelgruppen in trainingsplan.items():
         for muskelgruppe in muskelgruppen:
             st.markdown(f"### {muskelgruppe}")
 
-            passende_uebungen = [
-                ex for ex in EXERCISES
-                if ex["muskelgruppe"] == muskelgruppe
-                and ex["level"] in erlaubte_level
-                and ex.get("ort", "Gym") == trainingsort
-            ]
+            passende_uebungen = passende_uebungen_finden(
+                muskelgruppe,
+                level,
+                trainingsort
+            )
 
             if not passende_uebungen:
                 st.info(f"Für {muskelgruppe} wurden keine passenden Übungen gefunden.")
             else:
-                for ex in passende_uebungen[:3]:
+                for ex in passende_uebungen:
                     st.markdown(
-                        f"- **{ex['name']}** ({ex.get('ort', 'Gym')}) – "
+                        f"- **{ex['name']}** ({ex.get('ort', 'Gym')} | {ex['level']}) – "
                         f"{saetze_empfohlen} Sätze x {wiederholungen_empfohlen} "
                         f"({intensitaet})"
                     )
+
+                if level == "Fortgeschritten":
+                    st.caption("Fortgeschrittene erhalten bis zu 4 Übungen pro Körperteil.")
+                else:
+                    st.caption("Anfänger und Mittelstufe erhalten bis zu 3 Übungen pro Körperteil.")
