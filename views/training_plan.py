@@ -495,10 +495,25 @@ if level == "Mittelstufe":
 else:
     erlaubte_level = [level]
 
+def cardio_empfehlung(level):
+    if level == "Anfänger":
+        return "20–25 Minuten lockeres Cardio, z.B. Jogging, schnelles Gehen oder Velo."
+    elif level == "Mittelstufe":
+        return "30–40 Minuten Cardio, z.B. Jogging, Velo oder Crosstrainer."
+    else:
+        return "45–60 Minuten Cardio, z.B. Jogging, Velo oder Intervalltraining."
+
 for tag, muskelgruppen in trainingsplan.items():
+
     if not muskelgruppen:
         with st.expander(f"{tag}"):
-            st.write("Ruhetag / Erholung")
+
+            if "Cardio" in tag or "Bewegung" in tag or "Mobility" in tag:
+                st.markdown("### Cardio / Bewegung")
+                st.info(cardio_empfehlung(level))
+            else:
+                st.write("Ruhetag / Erholung")
+
         continue
 
     with st.expander(f"{tag}"):
@@ -516,7 +531,7 @@ for tag, muskelgruppen in trainingsplan.items():
             if not passende_uebungen:
                 st.info(f"Für {muskelgruppe} wurden keine passenden Übungen gefunden.")
             else:
-                for ex in passende_uebungen[:2]:
+                for ex in passende_uebungen[:3]:
                     st.markdown(
                         f"- **{ex['name']}** ({ex.get('ort', 'Gym')}) – "
                         f"{ex['saetze']} Sätze x {ex['wiederholungen']}"
