@@ -582,6 +582,6 @@ for tag, muskelgruppen in trainingsplan.items():
                     )
 
                 if level == "Fortgeschritten":
-                    st.caption("Fortgeschrittene erhalten bis zu 4 Übungen pro Körperteil.")
+                    st.caption("Fortgeschrittene erhalten 4 Übungen pro Körperteil.")
                 else:
-                    st.caption("Anfänger und Mittelstufe erhalten bis zu 3 Übungen pro Körperteil.")
+                    st.caption("Anfänger und Mittelstufe erhalten 3 Übungen pro Körperteil.")
