@@ -495,6 +495,7 @@ if level == "Mittelstufe":
 else:
     erlaubte_level = [level]
 
+
 def cardio_empfehlung(level):
     if level == "Anfänger":
         return "20–25 Minuten lockeres Cardio, z.B. Jogging, schnelles Gehen oder Velo."
@@ -502,6 +503,24 @@ def cardio_empfehlung(level):
         return "30–40 Minuten Cardio, z.B. Jogging, Velo oder Crosstrainer."
     else:
         return "45–60 Minuten Cardio, z.B. Jogging, Velo oder Intervalltraining."
+
+
+def trainingsumfang(level, ziel):
+    if level == "Anfänger":
+        return 2, "10–12", "leicht bis mittel"
+    elif level == "Mittelstufe":
+        return 3, "10–15", "mittel"
+    else:
+        if ziel == "Muskelaufbau":
+            return 4, "8–12", "mittel bis schwer"
+        elif ziel == "Abnehmen":
+            return 3, "12–15", "mittel, kurze Pausen"
+        else:
+            return 3, "10–15", "mittel bis schwer"
+
+
+saetze_empfohlen, wiederholungen_empfohlen, intensitaet = trainingsumfang(level, ziel)
+
 
 for tag, muskelgruppen in trainingsplan.items():
 
@@ -534,5 +553,6 @@ for tag, muskelgruppen in trainingsplan.items():
                 for ex in passende_uebungen[:3]:
                     st.markdown(
                         f"- **{ex['name']}** ({ex.get('ort', 'Gym')}) – "
-                        f"{ex['saetze']} Sätze x {ex['wiederholungen']}"
+                        f"{saetze_empfohlen} Sätze x {wiederholungen_empfohlen} "
+                        f"({intensitaet})"
                     )
