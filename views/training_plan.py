@@ -502,19 +502,69 @@ def cardio_empfehlung(level):
 
 def trainingsumfang(level, ziel):
     if level == "Anfänger":
-        return 2, "10–12", "leicht bis mittel", "leichtes Gewicht"
+        return 2, "10–12", "leicht bis mittel"
     elif level == "Mittelstufe":
-        return 3, "10–15", "mittel", "mittleres Gewicht"
+        return 3, "10–15", "mittel"
     else:
         if ziel == "Muskelaufbau":
-            return 4, "8–12", "mittel bis schwer", "schweres Gewicht"
+            return 4, "8–12", "mittel bis schwer"
         elif ziel == "Abnehmen":
-            return 4, "12–15", "mittel bis hoch, kurze Pausen", "mittleres Gewicht"
+            return 4, "12–15", "mittel bis hoch, kurze Pausen"
         else:
-            return 4, "10–15", "mittel bis schwer", "mittleres bis schweres Gewicht"
+            return 4, "10–15", "mittel bis schwer"
+
+
+def gewicht_empfehlung(ex_name, level, koerpergewicht=70, geschlecht="Weiblich"):
+
+    if level == "Anfänger":
+        faktor = 0.30
+    elif level == "Mittelstufe":
+        faktor = 0.50
+    else:
+        faktor = 0.75
+
+    if geschlecht == "Männlich":
+        faktor += 0.10
+
+    name = ex_name.lower()
+
+    if "beinpresse" in name:
+        gewicht = koerpergewicht * faktor * 1.5
+
+    elif "hip thrust" in name:
+        gewicht = koerpergewicht * faktor * 1.3
+
+    elif "kreuzheben" in name:
+        gewicht = koerpergewicht * faktor * 1.2
+
+    elif "latziehen" in name:
+        gewicht = koerpergewicht * faktor * 0.8
+
+    elif "rudern" in name:
+        gewicht = koerpergewicht * faktor * 0.7
+
+    elif "schulterpresse" in name:
+        gewicht = koerpergewicht * faktor * 0.45
+
+    elif "bankdrücken" in name:
+        gewicht = koerpergewicht * faktor * 0.7
+
+    elif "beinstrecker" in name or "beinbeuger" in name:
+        gewicht = koerpergewicht * faktor * 0.65
+
+    elif "bizeps" in name or "trizeps" in name:
+        gewicht = koerpergewicht * faktor * 0.30
+
+    else:
+        gewicht = koerpergewicht * faktor * 0.5
+
+    gewicht = round(gewicht / 2.5) * 2.5
+
+    return max(2.5, gewicht)
 
 
 def passende_uebungen_finden(muskelgruppe, level, trainingsort):
+
     alle_passenden = [
         ex for ex in EXERCISES
         if ex["muskelgruppe"] == muskelgruppe
@@ -524,9 +574,11 @@ def passende_uebungen_finden(muskelgruppe, level, trainingsort):
     if level == "Anfänger":
         ziel_anzahl = 3
         level_reihenfolge = ["Anfänger", "Mittelstufe", "Fortgeschritten"]
+
     elif level == "Mittelstufe":
         ziel_anzahl = 3
-        level_reihenfolge = ["Mittelstufe", "Anfänger", "Fortgeschritten"]
+        level_reihenfolge = ["Mittelstufe", "Fortgeschritten", "Anfänger"]
+
     else:
         ziel_anzahl = 4
         level_reihenfolge = ["Fortgeschritten", "Mittelstufe", "Anfänger"]
@@ -534,27 +586,37 @@ def passende_uebungen_finden(muskelgruppe, level, trainingsort):
     ausgewaehlt = []
 
     for level_name in level_reihenfolge:
-        for ex in alle_passenden:
-            if ex["level"] == level_name and ex not in ausgewaehlt:
+
+        passende_level_uebungen = [
+            ex for ex in alle_passenden
+            if ex["level"] == level_name
+        ]
+
+        for ex in passende_level_uebungen:
+
+            if ex not in ausgewaehlt:
                 ausgewaehlt.append(ex)
 
-            if len(ausgewaehlt) == ziel_anzahl:
+            if len(ausgewaehlt) >= ziel_anzahl:
                 return ausgewaehlt
 
     return ausgewaehlt
 
 
-saetze_empfohlen, wiederholungen_empfohlen, intensitaet, gewicht_empfehlung = trainingsumfang(level, ziel)
+saetze_empfohlen, wiederholungen_empfohlen, intensitaet = trainingsumfang(level, ziel)
 
 
 for tag, muskelgruppen in trainingsplan.items():
 
     if not muskelgruppen:
+
         with st.expander(f"{tag}"):
 
             if "Cardio" in tag or "Bewegung" in tag or "Mobility" in tag:
+
                 st.markdown("### Cardio / Bewegung")
                 st.info(cardio_empfehlung(level))
+
             else:
                 st.write("Ruhetag / Erholung")
 
@@ -563,6 +625,7 @@ for tag, muskelgruppen in trainingsplan.items():
     with st.expander(f"{tag}"):
 
         for muskelgruppe in muskelgruppen:
+
             st.markdown(f"### {muskelgruppe}")
 
             passende_uebungen = passende_uebungen_finden(
@@ -572,16 +635,36 @@ for tag, muskelgruppen in trainingsplan.items():
             )
 
             if not passende_uebungen:
-                st.info(f"Für {muskelgruppe} wurden keine passenden Übungen gefunden.")
+
+                st.info(
+                    f"Für {muskelgruppe} wurden keine passenden Übungen gefunden."
+                )
+
             else:
+
                 for ex in passende_uebungen:
+
                     if trainingsort == "Gym":
+
+                        empfohlenes_gewicht = gewicht_empfehlung(
+                            ex["name"],
+                            level,
+                            default_gewicht if "default_gewicht" in locals() else 70,
+                            default_geschlecht if "default_geschlecht" in locals() else "Weiblich"
+                        )
+
                         st.markdown(
                             f"- **{ex['name']}** ({ex.get('ort', 'Gym')}) – "
                             f"{saetze_empfohlen} Sätze x {wiederholungen_empfohlen} "
-                            f"({intensitaet}, {gewicht_empfehlung})"
+                            f"({intensitaet})"
                         )
+
+                        st.caption(
+                            f"Empfohlenes Startgewicht: ca. {empfohlenes_gewicht:.1f} kg"
+                        )
+
                     else:
+
                         st.markdown(
                             f"- **{ex['name']}** ({ex.get('ort', 'Home')}) – "
                             f"{saetze_empfohlen} Sätze x {wiederholungen_empfohlen} "
@@ -589,6 +672,10 @@ for tag, muskelgruppen in trainingsplan.items():
                         )
 
                 if level == "Fortgeschritten":
-                    st.caption("Fortgeschrittene erhalten 4 Übungen pro Körperteil.")
+                    st.caption(
+                        "Fortgeschrittene erhalten 4 Übungen pro Körperteil."
+                    )
                 else:
-                    st.caption("Anfänger und Mittelstufe erhalten 3 Übungen pro Körperteil.")
+                    st.caption(
+                        "Anfänger und Mittelstufe erhalten 3 Übungen pro Körperteil."
+                    )
