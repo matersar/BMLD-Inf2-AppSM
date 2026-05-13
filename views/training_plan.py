@@ -524,11 +524,9 @@ def passende_uebungen_finden(muskelgruppe, level, trainingsort):
     if level == "Anfänger":
         ziel_anzahl = 3
         level_reihenfolge = ["Anfänger", "Mittelstufe", "Fortgeschritten"]
-
     elif level == "Mittelstufe":
         ziel_anzahl = 3
         level_reihenfolge = ["Mittelstufe", "Anfänger", "Fortgeschritten"]
-
     else:
         ziel_anzahl = 4
         level_reihenfolge = ["Fortgeschritten", "Mittelstufe", "Anfänger"]
@@ -578,7 +576,7 @@ for tag, muskelgruppen in trainingsplan.items():
             else:
                 for ex in passende_uebungen:
                     st.markdown(
-                        f"- **{ex['name']}** ({ex.get('ort', 'Gym')} | {ex['level']}) – "
+                        f"- **{ex['name']}** ({ex.get('ort', 'Gym')}) – "
                         f"{saetze_empfohlen} Sätze x {wiederholungen_empfohlen} "
                         f"({intensitaet})"
                     )
