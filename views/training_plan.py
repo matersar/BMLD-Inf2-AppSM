@@ -24,14 +24,24 @@ profile_df = data_manager.load_user_data(
 
 if not profile_df.empty:
     latest_profile = profile_df.iloc[-1]
+
     default_ziel = latest_profile.get("Ziel", "Muskelaufbau")
     default_level = latest_profile.get("Fitnesslevel", "Anfänger")
     default_trainingstage = int(latest_profile.get("Trainingstage", 3))
+
+    default_gewicht = float(latest_profile.get("Gewicht", 70))
+    default_geschlecht = latest_profile.get("Geschlecht", "Weiblich")
+
     st.success("Profil wurde geladen ✅")
+
 else:
     default_ziel = "Muskelaufbau"
     default_level = "Anfänger"
     default_trainingstage = 3
+
+    default_gewicht = 70.0
+    default_geschlecht = "Weiblich"
+
     st.info("Noch kein Profil gespeichert. Du kannst trotzdem einen Trainingsplan erstellen.")
 
 if default_ziel not in GOAL_OPTIONS:
