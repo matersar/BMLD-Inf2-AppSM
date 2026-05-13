@@ -502,16 +502,16 @@ def cardio_empfehlung(level):
 
 def trainingsumfang(level, ziel):
     if level == "Anfänger":
-        return 2, "10–12", "leicht bis mittel"
+        return 2, "10–12", "leicht bis mittel", "leichtes Gewicht"
     elif level == "Mittelstufe":
-        return 3, "10–15", "mittel"
+        return 3, "10–15", "mittel", "mittleres Gewicht"
     else:
         if ziel == "Muskelaufbau":
-            return 4, "8–12", "mittel bis schwer"
+            return 4, "8–12", "mittel bis schwer", "schweres Gewicht"
         elif ziel == "Abnehmen":
-            return 4, "12–15", "mittel bis hoch, kurze Pausen"
+            return 4, "12–15", "mittel bis hoch, kurze Pausen", "mittleres Gewicht"
         else:
-            return 4, "10–15", "mittel bis schwer"
+            return 4, "10–15", "mittel bis schwer", "mittleres bis schweres Gewicht"
 
 
 def passende_uebungen_finden(muskelgruppe, level, trainingsort):
@@ -544,7 +544,7 @@ def passende_uebungen_finden(muskelgruppe, level, trainingsort):
     return ausgewaehlt
 
 
-saetze_empfohlen, wiederholungen_empfohlen, intensitaet = trainingsumfang(level, ziel)
+saetze_empfohlen, wiederholungen_empfohlen, intensitaet, gewicht_empfehlung = trainingsumfang(level, ziel)
 
 
 for tag, muskelgruppen in trainingsplan.items():
@@ -575,11 +575,18 @@ for tag, muskelgruppen in trainingsplan.items():
                 st.info(f"Für {muskelgruppe} wurden keine passenden Übungen gefunden.")
             else:
                 for ex in passende_uebungen:
-                    st.markdown(
-                        f"- **{ex['name']}** ({ex.get('ort', 'Gym')}) – "
-                        f"{saetze_empfohlen} Sätze x {wiederholungen_empfohlen} "
-                        f"({intensitaet})"
-                    )
+                    if trainingsort == "Gym":
+                        st.markdown(
+                            f"- **{ex['name']}** ({ex.get('ort', 'Gym')}) – "
+                            f"{saetze_empfohlen} Sätze x {wiederholungen_empfohlen} "
+                            f"({intensitaet}, {gewicht_empfehlung})"
+                        )
+                    else:
+                        st.markdown(
+                            f"- **{ex['name']}** ({ex.get('ort', 'Home')}) – "
+                            f"{saetze_empfohlen} Sätze x {wiederholungen_empfohlen} "
+                            f"({intensitaet})"
+                        )
 
                 if level == "Fortgeschritten":
                     st.caption("Fortgeschrittene erhalten 4 Übungen pro Körperteil.")
