@@ -502,18 +502,22 @@ for tag, muskelgruppen in trainingsplan.items():
         continue
 
     with st.expander(f"{tag}"):
-        passende_uebungen = [
-            ex for ex in EXERCISES
-            if ex["muskelgruppe"] in muskelgruppen
-            and ex["level"] in erlaubte_level
-            and ex.get("ort", "Gym") == trainingsort
-        ]
 
-        if not passende_uebungen:
-            st.info("Für diesen Tag wurden keine passenden Übungen gefunden.")
-        else:
-            for ex in passende_uebungen[:5]:
-                st.markdown(
-                    f"- **{ex['name']}** ({ex['muskelgruppe']} | {ex.get('ort', 'Gym')}) – "
-                    f"{ex['saetze']} Sätze x {ex['wiederholungen']}"
-                )
+        for muskelgruppe in muskelgruppen:
+            st.markdown(f"### {muskelgruppe}")
+
+            passende_uebungen = [
+                ex for ex in EXERCISES
+                if ex["muskelgruppe"] == muskelgruppe
+                and ex["level"] in erlaubte_level
+                and ex.get("ort", "Gym") == trainingsort
+            ]
+
+            if not passende_uebungen:
+                st.info(f"Für {muskelgruppe} wurden keine passenden Übungen gefunden.")
+            else:
+                for ex in passende_uebungen[:2]:
+                    st.markdown(
+                        f"- **{ex['name']}** ({ex.get('ort', 'Gym')}) – "
+                        f"{ex['saetze']} Sätze x {ex['wiederholungen']}"
+                    )
