@@ -540,31 +540,22 @@ def gewicht_empfehlung(ex_name, level, koerpergewicht=70, geschlecht="Weiblich")
 
     if "beinpresse" in name:
         gewicht = koerpergewicht * faktor * 1.5
-
     elif "hip thrust" in name:
         gewicht = koerpergewicht * faktor * 1.3
-
     elif "kreuzheben" in name:
         gewicht = koerpergewicht * faktor * 1.2
-
     elif "latziehen" in name:
         gewicht = koerpergewicht * faktor * 0.8
-
     elif "rudern" in name:
         gewicht = koerpergewicht * faktor * 0.7
-
     elif "schulterpresse" in name:
         gewicht = koerpergewicht * faktor * 0.45
-
     elif "bankdrücken" in name:
         gewicht = koerpergewicht * faktor * 0.7
-
     elif "beinstrecker" in name or "beinbeuger" in name:
         gewicht = koerpergewicht * faktor * 0.65
-
     elif "bizeps" in name or "trizeps" in name:
         gewicht = koerpergewicht * faktor * 0.30
-
     else:
         gewicht = koerpergewicht * faktor * 0.5
 
@@ -672,6 +663,34 @@ for tag, muskelgruppen in trainingsplan.items():
                         st.caption(
                             f"Empfohlenes Startgewicht: ca. {empfohlenes_gewicht:.1f} kg"
                         )
+
+                        gewicht_key = f"{tag}_{muskelgruppe}_{ex['name']}_gewicht"
+
+                        eigenes_gewicht = st.number_input(
+                            f"Dein Trainingsgewicht für {ex['name']} (kg)",
+                            min_value=0.0,
+                            step=2.5,
+                            key=gewicht_key
+                        )
+
+                        anstrengung = st.selectbox(
+                            f"Wie schwer war {ex['name']}?",
+                            ["zu leicht", "passend", "zu schwer"],
+                            key=f"{tag}_{muskelgruppe}_{ex['name']}_anstrengung"
+                        )
+
+                        if anstrengung == "zu leicht":
+                            st.success(
+                                "Nächstes Mal kannst du das Gewicht leicht erhöhen, z.B. um 2.5–5 kg."
+                            )
+                        elif anstrengung == "passend":
+                            st.info(
+                                "Das Gewicht passt gut. Behalte es bei und achte auf saubere Ausführung."
+                            )
+                        else:
+                            st.warning(
+                                "Das Gewicht ist wahrscheinlich zu schwer. Reduziere es leicht und achte auf Technik."
+                            )
 
                     else:
 
