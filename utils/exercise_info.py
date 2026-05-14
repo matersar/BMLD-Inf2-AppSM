@@ -18,8 +18,8 @@ EXERCISE_INFO = {
         "tipp": "Nicht den Oberkörper verdrehen und die Bewegung langsam kontrollieren."
     },
 
-    "Klimmzüge": {
-        "bild": "images/Klimmzüge.jpg",
+    "Klimmzuege": {
+        "bild": "images/Klimmzuege.jpg",
         "beschreibung": "Ziehe den Körper kontrolliert nach oben, bis die Brust Richtung Stange kommt. Der Rücken arbeitet aktiv mit.",
         "tipp": "Nicht schwingen und die Schulterblätter vor der Bewegung aktivieren."
     },
