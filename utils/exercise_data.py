@@ -3,7 +3,7 @@ EXERCISES = [
     {"name": "Latziehen", "muskelgruppe": "Rücken", "level": "Anfänger", "ort": "Gym", "saetze": 3, "wiederholungen": "10-12"},
     {"name": "Rudern Maschine", "muskelgruppe": "Rücken", "level": "Anfänger", "ort": "Gym", "saetze": 3, "wiederholungen": "10-12"},
     {"name": "Einarmiges Kurzhantelrudern", "muskelgruppe": "Rücken", "level": "Anfänger", "ort": "Gym", "saetze": 3, "wiederholungen": "10-12"},
-    {"name": "Klimmzüge", "muskelgruppe": "Rücken", "level": "Fortgeschritten", "ort": "Gym", "saetze": 3, "wiederholungen": "8-10"},
+    {"name": "Klimmzuege", "muskelgruppe": "Rücken", "level": "Fortgeschritten", "ort": "Gym", "saetze": 3, "wiederholungen": "8-10"},
     {"name": "Langhantelrudern", "muskelgruppe": "Rücken", "level": "Fortgeschritten", "ort": "Gym", "saetze": 4, "wiederholungen": "8-10"},
 
     # Rücken - Home
