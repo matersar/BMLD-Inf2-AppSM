@@ -665,7 +665,7 @@ for tag, muskelgruppen in trainingsplan.items():
 
                         if info:
                             try:
-                                st.image(info["bild"], width=300)
+                                st.image(info["bild"], use_container_width=True)
                             except Exception:
                                 st.warning(f"Bild nicht gefunden: {info['bild']}")
 
@@ -714,7 +714,7 @@ for tag, muskelgruppen in trainingsplan.items():
 
                         if info:
                             try:
-                                st.image(info["bild"], width=300)
+                                st.image(info["bild"], use_container_width=True)
                             except Exception:
                                 st.warning(f"Bild nicht gefunden: {info['bild']}")
 
