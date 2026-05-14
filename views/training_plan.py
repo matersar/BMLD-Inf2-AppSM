@@ -664,7 +664,11 @@ for tag, muskelgruppen in trainingsplan.items():
                         )
 
                         if info:
-                            st.image(info["bild"], width=300)
+                            try:
+                                st.image(info["bild"], width=300)
+                            except Exception:
+                                st.warning(f"Bild nicht gefunden: {info['bild']}")
+
                             st.caption(f"📖 {info['beschreibung']}")
                             st.info(f"💡 Tipp: {info['tipp']}")
 
@@ -709,7 +713,11 @@ for tag, muskelgruppen in trainingsplan.items():
                         )
 
                         if info:
-                            st.image(info["bild"], width=300)
+                            try:
+                                st.image(info["bild"], width=300)
+                            except Exception:
+                                st.warning(f"Bild nicht gefunden: {info['bild']}")
+
                             st.caption(f"📖 {info['beschreibung']}")
                             st.info(f"💡 Tipp: {info['tipp']}")
 
