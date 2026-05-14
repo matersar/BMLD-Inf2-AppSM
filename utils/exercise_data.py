@@ -19,7 +19,7 @@ EEXERCISE_INFO = {
     },
 
     "Klimmzuege": {
-        "bild": "images/Klimmzuege.jpg",
+        "bild": "images/Klimmzuege.png",
         "beschreibung": "Ziehe den Körper kontrolliert nach oben, bis die Brust Richtung Stange kommt. Der Rücken arbeitet aktiv mit.",
         "tipp": "Nicht schwingen und die Schulterblätter vor der Bewegung aktivieren."
     },
