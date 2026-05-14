@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 from utils.exercise_data import EXERCISES
+from utils.exercise_info import EXERCISE_INFO
 from utils.progress_manager import ProgressManager
 from utils.data_manager import DataManager
 
@@ -645,6 +646,8 @@ for tag, muskelgruppen in trainingsplan.items():
 
                 for ex in passende_uebungen:
 
+                    info = EXERCISE_INFO.get(ex["name"])
+
                     if trainingsort == "Gym":
 
                         empfohlenes_gewicht = gewicht_empfehlung(
@@ -659,6 +662,11 @@ for tag, muskelgruppen in trainingsplan.items():
                             f"{saetze_empfohlen} Sätze x {wiederholungen_empfohlen} "
                             f"({intensitaet})"
                         )
+
+                        if info:
+                            st.image(info["bild"], width=300)
+                            st.caption(f"📖 {info['beschreibung']}")
+                            st.info(f"💡 Tipp: {info['tipp']}")
 
                         st.caption(
                             f"Empfohlenes Startgewicht: ca. {empfohlenes_gewicht:.1f} kg"
@@ -699,6 +707,11 @@ for tag, muskelgruppen in trainingsplan.items():
                             f"{saetze_empfohlen} Sätze x {wiederholungen_empfohlen} "
                             f"({intensitaet})"
                         )
+
+                        if info:
+                            st.image(info["bild"], width=300)
+                            st.caption(f"📖 {info['beschreibung']}")
+                            st.info(f"💡 Tipp: {info['tipp']}")
 
                 if level == "Fortgeschritten":
                     st.caption(
