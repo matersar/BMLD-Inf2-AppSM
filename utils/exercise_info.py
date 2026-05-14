@@ -23,7 +23,6 @@ EXERCISE_INFO = {
         "beschreibung": "Ziehe den Körper kontrolliert nach oben, bis die Brust Richtung Stange kommt. Der Rücken arbeitet aktiv mit.",
         "tipp": "Nicht schwingen und die Schulterblätter vor der Bewegung aktivieren."
     },
-
     "Langhantelrudern": {
         "bild": "images/Langhantelrudern.jpg",
         "beschreibung": "Beuge den Oberkörper leicht nach vorne und ziehe die Langhantel kontrolliert Richtung Bauch.",
