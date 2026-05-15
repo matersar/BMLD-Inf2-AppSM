@@ -13,7 +13,7 @@ EXERCISE_INFO = {
     },
 
     "Einarmiges Kurzhantelrudern": {
-        "bild": "images/Einarmiges Kurzhantelrudern.jpg",
+        "bild": "images/Einarmiges Kurzhantelrudern.png",
         "beschreibung": "Ziehe die Kurzhantel eng am Körper Richtung Hüfte. Der Rumpf bleibt stabil und der Rücken neutral.",
         "tipp": "Nicht den Oberkörper verdrehen und die Bewegung langsam kontrollieren."
     },
