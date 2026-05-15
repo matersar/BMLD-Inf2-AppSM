@@ -61,7 +61,7 @@ EXERCISE_INFO = {
         "tipp": "Ellbogen nah am Körper halten und nicht mit dem Oberkörper schwingen."
     },
 
-    "Trizepsdrücken Kabel": {
+    "Trizepsdrücken": {
         "bild": "images/Trizepsdrücken.png",
         "beschreibung": "Drücke den Kabelgriff kontrolliert nach unten. Dabei wird vor allem der Trizeps aktiviert.",
         "tipp": "Ellbogen am Körper fixieren und Schultern ruhig halten."
