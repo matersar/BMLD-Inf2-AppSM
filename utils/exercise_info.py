@@ -1,13 +1,13 @@
 EXERCISE_INFO = {
     # Rücken - Gym
     "Latziehen": {
-        "bild": "images/Latziehen.jpg",
+        "bild": "images/Latziehen.png",
         "beschreibung": "Ziehe die Stange kontrolliert zur oberen Brust. Die Schulterblätter werden aktiv nach hinten und unten geführt.",
         "tipp": "Brust aufrichten, Schultern nicht hochziehen und nicht mit Schwung arbeiten."
     },
 
     "Rudern Maschine": {
-        "bild": "images/Rudern Maschine.jpg",
+        "bild": "images/Rudern Maschine.png",
         "beschreibung": "Ziehe die Griffe kontrolliert Richtung Bauch. Dabei werden vor allem oberer Rücken und Schulterblattmuskulatur aktiviert.",
         "tipp": "Rücken gerade halten und die Schulterblätter am Ende bewusst zusammenführen."
     },
@@ -24,7 +24,7 @@ EXERCISE_INFO = {
         "tipp": "Nicht schwingen und die Schulterblätter vor der Bewegung aktivieren."
     },
     "Langhantelrudern": {
-        "bild": "images/Langhantelrudern.jpg",
+        "bild": "images/Langhantelrudern.png",
         "beschreibung": "Beuge den Oberkörper leicht nach vorne und ziehe die Langhantel kontrolliert Richtung Bauch.",
         "tipp": "Rücken gerade halten, Bauch anspannen und keinen Rundrücken machen."
     },
@@ -61,8 +61,8 @@ EXERCISE_INFO = {
         "tipp": "Ellbogen nah am Körper halten und nicht mit dem Oberkörper schwingen."
     },
 
-    "Trizepsdrücken": {
-        "bild": "images/Trizepsdrücken.png",
+    "Trizepsdruecken": {
+        "bild": "images/Trizepsdruecken.png",
         "beschreibung": "Drücke den Kabelgriff kontrolliert nach unten. Dabei wird vor allem der Trizeps aktiviert.",
         "tipp": "Ellbogen am Körper fixieren und Schultern ruhig halten."
     },
@@ -124,7 +124,7 @@ EXERCISE_INFO = {
     },
 
     "Kreuzheben": {
-        "bild": "images/Kreuzheben.jpg",
+        "bild": "images/Kreuzheben.png",
         "beschreibung": "Führe das Gewicht nah am Körper und bewege die Hüfte kontrolliert nach hinten.",
         "tipp": "Rücken neutral halten und Bauchspannung aufbauen."
     },
