@@ -14,8 +14,15 @@ data_manager = DataManager(
 
 progress_manager = ProgressManager()
 
-profile_df = data_manager.load_user_data("profile.csv", initial_value=pd.DataFrame())
-nutrition_df = data_manager.load_user_data("data.csv", initial_value=pd.DataFrame())
+# PROFIL LADEN
+profile_df = data_manager.load_user_data(
+    "profile.csv",
+    initial_value=pd.DataFrame()
+)
+
+# WICHTIG: NICHT erneut über WebDAV laden
+# Stattdessen die bereits geladenen Daten aus session_state verwenden
+nutrition_df = st.session_state.get("data_df", pd.DataFrame())
 
 try:
     progress_df = progress_manager.load_progress()
@@ -71,11 +78,29 @@ avg_kcal = 0
 avg_protein = 0
 avg_fett = 0
 
-if not nutrition_df.empty and "Kalorien" in nutrition_df.columns:
+if not nutrition_df.empty:
+    kcal_col = None
+    protein_col = None
+    fett_col = None
+
+    for col in nutrition_df.columns:
+        if col.lower() in ["kalorien", "calories"]:
+            kcal_col = col
+        if col.lower() == "protein":
+            protein_col = col
+        if col.lower() in ["fett", "fat"]:
+            fett_col = col
+
     meals_count = len(nutrition_df)
-    avg_kcal = nutrition_df["Kalorien"].mean()
-    avg_protein = nutrition_df["Protein"].mean() if "Protein" in nutrition_df.columns else 0
-    avg_fett = nutrition_df["Fett"].mean() if "Fett" in nutrition_df.columns else 0
+
+    if kcal_col:
+        avg_kcal = nutrition_df[kcal_col].mean()
+
+    if protein_col:
+        avg_protein = nutrition_df[protein_col].mean()
+
+    if fett_col:
+        avg_fett = nutrition_df[fett_col].mean()
 
 # =========================
 # HERO
@@ -177,144 +202,3 @@ col1.metric("🎯 Ziel", ziel)
 col2.metric("✅ Trainings", erledigte_trainings)
 col3.metric("🍽️ Mahlzeiten", meals_count)
 col4.metric("🏅 Badge", badge)
-
-st.divider()
-
-# =========================
-# PROFIL
-# =========================
-
-st.subheader("👤 Profilübersicht")
-
-if not profile_df.empty:
-    col1, col2, col3 = st.columns(3)
-    col1.metric("🏋️ Fitnesslevel", level)
-    col2.metric("📅 Trainingsplan", f"{trainingstage} Tage/Woche")
-    col3.metric("🧠 BMI", f"{bmi:.1f}")
-
-    col4, col5 = st.columns(2)
-    col4.metric("⚖️ Gewicht", f"{gewicht} kg")
-    col5.metric("📏 Größe", f"{groesse} cm")
-
-    if bmi < 18.5:
-        st.warning("BMI-Bewertung: Untergewicht")
-    elif bmi < 25:
-        st.success("BMI-Bewertung: Normalgewicht")
-    elif bmi < 30:
-        st.info("BMI-Bewertung: Übergewicht")
-    else:
-        st.warning("BMI-Bewertung: starkes Übergewicht")
-else:
-    st.info("Noch kein Profil gespeichert. Bitte zuerst unter „Mein Profil“ ausfüllen.")
-
-st.divider()
-
-# =========================
-# TRAINING
-# =========================
-
-st.subheader("🏋️ Trainingsübersicht")
-
-if not progress_df.empty and "completed" in progress_df.columns:
-    if erledigte_trainings < 5:
-        user_level = "Anfänger"
-    elif erledigte_trainings < 15:
-        user_level = "Mittelstufe"
-    else:
-        user_level = "Fortgeschritten"
-
-    col1, col2, col3 = st.columns(3)
-    col1.metric("✅ Erledigte Trainings", erledigte_trainings)
-    col2.metric("📌 Gespeicherte Einträge", alle_eintraege)
-    col3.metric("📈 Trainings-Level", user_level)
-
-    if not erledigt_df.empty and "timestamp" in erledigt_df.columns:
-        erledigt_df["timestamp"] = pd.to_datetime(erledigt_df["timestamp"], errors="coerce")
-        erledigt_df = erledigt_df.dropna(subset=["timestamp"])
-        erledigt_df = erledigt_df.sort_values("timestamp")
-
-    if not erledigt_df.empty:
-        st.subheader("📋 Letzte Trainingseinträge")
-
-        letzte_trainings = erledigt_df.tail(5).copy()
-        letzte_trainings = letzte_trainings.rename(columns={
-            "timestamp": "Datum",
-            "goal": "Ziel",
-            "level": "Fitnesslevel",
-            "training_days": "Trainingstage",
-            "day_name": "Trainingstag",
-            "completed": "Erledigt"
-        })
-
-        letzte_trainings["Datum"] = pd.to_datetime(
-            letzte_trainings["Datum"],
-            errors="coerce"
-        ).dt.strftime("%d.%m.%Y %H:%M")
-
-        letzte_trainings["Erledigt"] = letzte_trainings["Erledigt"].map({True: "Ja", False: "Nein"})
-
-        spalten = ["Datum", "Ziel", "Fitnesslevel", "Trainingstage", "Trainingstag", "Erledigt"]
-        letzte_trainings = letzte_trainings[[col for col in spalten if col in letzte_trainings.columns]]
-
-        st.dataframe(letzte_trainings, use_container_width=True)
-else:
-    st.info("Noch keine Trainingsfortschritte gespeichert.")
-
-st.divider()
-
-# =========================
-# ERNÄHRUNG
-# =========================
-
-st.subheader("🥗 Ernährungsübersicht")
-
-if not nutrition_df.empty and "Kalorien" in nutrition_df.columns:
-    col1, col2, col3, col4 = st.columns(4)
-
-    col1.metric("🍽️ Mahlzeiten", meals_count)
-    col2.metric("📊 Ø Kalorien", f"{avg_kcal:.0f} kcal")
-    col3.metric("💪 Ø Protein", f"{avg_protein:.1f} g")
-    col4.metric("🥑 Ø Fett", f"{avg_fett:.1f} g")
-
-    letzte_mahlzeit = nutrition_df.iloc[-1]
-
-    st.info(
-        f"Letzte Mahlzeit: **{letzte_mahlzeit['Name']}** "
-        f"mit **{letzte_mahlzeit['Kalorien']:.0f} kcal** "
-        f"und **{letzte_mahlzeit['Protein']:.1f} g Protein**."
-    )
-else:
-    st.info("Noch keine Mahlzeiten gespeichert.")
-
-st.divider()
-
-# =========================
-# MOTIVATION
-# =========================
-
-st.subheader("🔥 Motivation")
-
-if not profile_df.empty:
-    if erledigte_trainings > 0 and meals_count > 0:
-        st.success(
-            "Stark! Du nutzt bereits Training und Ernährung zusammen. "
-            "Deine gespeicherten Daten helfen dir, deine Entwicklung besser zu verstehen. "
-            "Bleib konsequent – kleine Schritte führen langfristig zu grossen Ergebnissen 💪"
-        )
-    elif erledigte_trainings > 0:
-        st.info(
-            "Du hast bereits Trainingsfortschritte gespeichert. "
-            "Ergänze jetzt noch deine Ernährung, damit die App deine Entwicklung noch besser analysieren kann."
-        )
-    elif meals_count > 0:
-        st.info(
-            "Du hast bereits Mahlzeiten gespeichert. "
-            "Speichere jetzt auch Trainingsfortschritte, um Ernährung und Training gemeinsam auszuwerten."
-        )
-    else:
-        st.warning(
-            "Starte mit einer Mahlzeit oder einem Training. "
-            "Jeder gespeicherte Eintrag ist ein Schritt in Richtung deines Ziels."
-        )
-else:
-    st.info("Fülle zuerst dein Profil aus, damit dein Dashboard personalisiert wird.")
