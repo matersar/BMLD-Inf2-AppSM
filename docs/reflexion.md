@@ -170,7 +170,7 @@ Fortschrittsgrafiken mit mehr Optionen,
 Suchfunktion für Übungen,
 oder Trainingsvideos zu Übungen.
 
-Auch das Design könnte weiter verbessert und noch moderner gestaltet werden.
+Auch die Benutzeroberfläche könnte zukünftig weiter optimiert und für mobile Geräte erweitert werden.
 
 Fazit
 
