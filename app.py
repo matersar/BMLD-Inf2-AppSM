@@ -1,33 +1,33 @@
 import streamlit as st
 import pandas as pd
+
 # --- NEW CODE: import and initialize data manager and login manager ---
 from utils.data_manager import DataManager
 from utils.login_manager import LoginManager
 
-data_manager = DataManager(       # initialize data manager
-    fs_protocol='webdav',         # protocol for the filesystem, use webdav for switch drive
-    fs_root_folder="Informatik_2_App"  # folder on switch drive where the data is stored
-    ) 
-login_manager = LoginManager(data_manager) # handles user login and registration
-login_manager.login_register()             # stops if not logged in
-# --- END OF NEW CODE ---
+data_manager = DataManager(
+    fs_protocol='webdav',
+    fs_root_folder="Informatik_2_App"
+)
 
-# --- CODE UPDATE: load user data from data manager if not already present in session state --
+login_manager = LoginManager(data_manager)
+login_manager.login_register()
+
+# --- LOAD USER DATA ---
 if 'data_df' not in st.session_state:
     st.session_state['data_df'] = data_manager.load_user_data(
-        'data.csv',                     # The file on switch drive where the data is stored
-      initial_value=pd.DataFrame(columns=[
-    "timestamp",
-    "meal_name",
-    "portion_g",
-    "calories",
-    "protein",
-    "carbs",
-    "fat"
-]),   # Initial value if the file does not exist
-parse_dates=['timestamp']       # Parse timestamp as datetime
+        'data.csv',
+        initial_value=pd.DataFrame(columns=[
+            "timestamp",
+            "meal_name",
+            "portion_g",
+            "calories",
+            "protein",
+            "carbs",
+            "fat"
+        ]),
+        parse_dates=['timestamp']
     )
-# --- END OF CODE UPDATE ---
 
 st.set_page_config(
     page_title="Meine App",
@@ -69,13 +69,21 @@ pg_analysis = st.Page(
     icon=":material/analytics:"
 )
 
+# HELP
+pg_help = st.Page(
+    "views/help.py",
+    title="Help",
+    icon=":material/help:"
+)
+
 # Navigation
 pg = st.navigation([
     pg_home,
     pg_profile,
     pg_nutrition,
     pg_training,
-    pg_analysis 
+    pg_analysis,
+    pg_help
 ])
 
 pg.run()
