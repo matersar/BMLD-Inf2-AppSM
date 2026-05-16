@@ -24,6 +24,8 @@ Die App unterstützt Benutzer:innen dabei, ihre persönlichen Fitness- und Ernä
 - Anzahl Trainingstage pro Woche festlegen
 - BMI Berechnung und Bewertung
 
+---
+
 ### 🥗 Nährwert Rechner
 
 - Berechnung von Kalorien und Makronährstoffen pro Portion
@@ -32,6 +34,8 @@ Die App unterstützt Benutzer:innen dabei, ihre persönlichen Fitness- und Ernä
 - Bewertung der Mahlzeiten passend zum Trainingsziel
 - Speicherung von Mahlzeiten
 - CSV Export der gespeicherten Daten
+
+---
 
 ### 🏋️ Trainingsplan
 
@@ -44,6 +48,12 @@ Die App unterstützt Benutzer:innen dabei, ihre persönlichen Fitness- und Ernä
 - Übungen nach Muskelgruppen
 - Wochenfortschritt speichern
 - Motivation, Badges und Streak-System
+- Übungen mit visuellen Anleitungen
+- Start- und Endpositionen der Übungen
+- Anatomische Muskelmarkierungen
+- Home- und Gym-Übungen
+
+---
 
 ### 📊 Analyse
 
@@ -53,6 +63,8 @@ Die App unterstützt Benutzer:innen dabei, ihre persönlichen Fitness- und Ernä
 - Automatische Empfehlungen und Bewertungen
 - Übersicht über Fortschritte und Entwicklung
 
+---
+
 ### 🏠 Dashboard
 
 - Zentrale Übersicht aller wichtigen Daten
@@ -60,6 +72,15 @@ Die App unterstützt Benutzer:innen dabei, ihre persönlichen Fitness- und Ernä
 - Ernährungsübersicht
 - Trainingsübersicht
 - Motivation und Fortschrittsanzeige
+
+---
+
+### ❓ Help & Support
+
+- FAQ Bereich
+- Hilfe zur Nutzung der App
+- Feedbackformular
+- Unterstützung für neue Benutzer:innen
 
 ---
 
@@ -94,6 +115,23 @@ Die App soll Benutzer:innen motivieren:
 - regelmäßiger zu trainieren
 - Fortschritte sichtbar zu machen
 - persönliche Fitnessziele langfristig zu erreichen
+
+---
+
+## 📚 Learnings & Reflexion
+
+Während der Entwicklung von FitPlan lernten wir:
+
+- Arbeiten mit Streamlit
+- Datenverwaltung mit Pandas
+- Speicherung über WebDAV
+- Strukturierung grösserer Python-Projekte
+- Entwicklung einer benutzerfreundlichen Oberfläche
+- Verbindung von Trainings- und Ernährungsdaten
+
+Eine besondere Herausforderung war die stabile Datenspeicherung sowie die Verknüpfung von Training, Ernährung und Fortschrittsanalyse innerhalb einer gemeinsamen Anwendung.
+
+Zusätzlich konnten wir unsere Kenntnisse im Bereich UI-Design, Datenanalyse und Projektstrukturierung erweitern.
 
 ---
 
