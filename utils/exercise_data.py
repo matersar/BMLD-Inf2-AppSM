@@ -41,7 +41,6 @@ EXERCISES = [
     {"name": "Beinstrecker", "muskelgruppe": "Beine", "level": "Anfänger", "ort": "Gym"},
     {"name": "Beinbeuger", "muskelgruppe": "Beine", "level": "Anfänger", "ort": "Gym"},
     {"name": "Adduktoren Maschine", "muskelgruppe": "Beine", "level": "Mittelstufe", "ort": "Gym"},
-    {"name": "Abduktoren Maschine", "muskelgruppe": "Beine", "level": "Mittelstufe", "ort": "Gym"},
     {"name": "Front Squats", "muskelgruppe": "Beine", "level": "Mittelstufe", "ort": "Gym"},
     {"name": "Kreuzheben", "muskelgruppe": "Beine", "level": "Fortgeschritten", "ort": "Gym"},
 
