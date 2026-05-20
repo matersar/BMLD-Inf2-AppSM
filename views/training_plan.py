@@ -745,7 +745,7 @@ if ziel == "Abnehmen":
     else:
         kcal_pro_training = 400
 
-    kcal_verbrauch = trainingstage * kcal_pro_training
+    kcal_verbrauch = trainingstage_anzahl * kcal_pro_training
 
     st.metric(
         "🔥 Geschätzter Kalorienverbrauch pro Woche",
@@ -754,4 +754,4 @@ if ziel == "Abnehmen":
 
     st.info(
         "Der Kalorienverbrauch ist eine grobe Schätzung und hängt von Intensität, Körpergewicht und Trainingsdauer ab."
-    )               
+    )            
