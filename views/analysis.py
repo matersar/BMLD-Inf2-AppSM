@@ -264,7 +264,7 @@ if not progress_df.empty and "completed" in progress_df.columns:
         })
 
         display_df["Datum"] = pd.to_datetime(
-            display_df["Datum"],
+            display_df["timestamp"],
             errors="coerce"
         ).dt.strftime("%d.%m.%Y %H:%M")
 
