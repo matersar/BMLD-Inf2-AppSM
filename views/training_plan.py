@@ -510,6 +510,67 @@ def cardio_empfehlung(level):
     else:
         return "45–60 Minuten Cardio: Jogging, Velo oder Intervalltraining. Intensität: mittel bis hoch."
 
+def kcal_uebung_schaetzen(ex_name, level, saetze):
+
+    name = ex_name.lower()
+
+    if level == "Anfänger":
+        basis = 35
+
+    elif level == "Mittelstufe":
+        basis = 50
+
+    else:
+        basis = 65
+
+    if any(wort in name for wort in ["jump", "mountain", "burpee"]):
+        faktor = 1.4
+
+    elif any(wort in name for wort in [
+        "beinpresse",
+        "kniebeugen",
+        "kreuzheben",
+        "front",
+        "squat",
+        "hip thrust"
+    ]):
+        faktor = 1.3
+
+    elif any(wort in name for wort in [
+        "ausfallschritte",
+        "bulgarian",
+        "donkey",
+        "kickbacks",
+        "fire hydrants"
+    ]):
+        faktor = 1.15
+
+    elif any(wort in name for wort in [
+        "plank",
+        "crunch",
+        "russian",
+        "hanging"
+    ]):
+        faktor = 0.9
+
+    elif any(wort in name for wort in [
+        "bizeps",
+        "trizeps",
+        "curls"
+    ]):
+        faktor = 0.75
+
+    elif any(wort in name for wort in [
+        "rudern",
+        "latziehen",
+        "klimm"
+    ]):
+        faktor = 1.1
+
+    else:
+        faktor = 1.0
+
+    return round(basis * faktor * saetze)
 
 def trainingsumfang(level, ziel):
     if level == "Anfänger":
