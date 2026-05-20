@@ -41,31 +41,24 @@ if not profile_df.empty:
     profil_ziel = profile.get("Ziel", "Muskelaufbau")
     profil_gewicht = float(profile.get("Gewicht", 70))
     profil_trainingstage = int(profile.get("Trainingstage", 3))
-    profil_name = profile.get("Name", "")
 
     if profil_ziel == "Muskelaufbau":
-        ernährungsziel = "Zunehmen / Muskelaufbau"
         kalorien_faktor = 36
         protein_faktor = 1.8
     elif profil_ziel == "Abnehmen":
-        ernährungsziel = "Abnehmen"
         kalorien_faktor = 28
         protein_faktor = 1.6
     else:
-        ernährungsziel = "Halten / gesünder & fitter werden"
         kalorien_faktor = 32
         protein_faktor = 1.5
 
-    kalorien_ziel_basis = profil_gewicht * kalorien_faktor
-    trainings_bonus = profil_trainingstage * 50
-    kalorien_ziel = kalorien_ziel_basis + trainings_bonus
-
+    kalorien_ziel = (profil_gewicht * kalorien_faktor) + (profil_trainingstage * 50)
     protein_ziel = profil_gewicht * protein_faktor
     wasser_ziel = profil_gewicht * 35 / 1000
 
     st.write(
-        f"Die Zielwerte werden automatisch aus deinem Profil berechnet. "
-        f"Dafür nutzt die App dein Gewicht, dein Ziel und deine Trainingstage pro Woche."
+        "Die Zielwerte werden automatisch aus deinem Profil berechnet. "
+        "Dafür nutzt die App dein Gewicht, dein Ziel und deine Trainingstage pro Woche."
     )
 
     col1, col2, col3 = st.columns(3)
@@ -133,10 +126,8 @@ if not nutrition_df.empty and "Kalorien" in nutrition_df.columns and "Protein" i
     if len(df) >= 2:
         st.subheader("📈 Kalorienverlauf")
 
-        kalorien_chart = df[["Eintrag", "Kalorien"]]
-
         st.line_chart(
-            kalorien_chart,
+            df[["Eintrag", "Kalorien"]],
             x="Eintrag",
             y="Kalorien"
         )
@@ -145,10 +136,8 @@ if not nutrition_df.empty and "Kalorien" in nutrition_df.columns and "Protein" i
 
         st.subheader("📈 Proteinverlauf")
 
-        protein_chart = df[["Eintrag", "Protein"]]
-
         st.line_chart(
-            protein_chart,
+            df[["Eintrag", "Protein"]],
             x="Eintrag",
             y="Protein"
         )
@@ -159,18 +148,19 @@ if not nutrition_df.empty and "Kalorien" in nutrition_df.columns and "Protein" i
 
     st.subheader("🏆 Top-Mahlzeiten")
 
-    top_protein = df.loc[df["Protein"].idxmax()]
-    top_calories = df.loc[df["Kalorien"].idxmax()]
+    if "Name" in df.columns:
+        top_protein = df.loc[df["Protein"].idxmax()]
+        top_calories = df.loc[df["Kalorien"].idxmax()]
 
-    st.info(
-        f"Proteinreichste Mahlzeit: **{top_protein['Name']}** "
-        f"mit **{top_protein['Protein']} g Protein**"
-    )
+        st.info(
+            f"Proteinreichste Mahlzeit: **{top_protein['Name']}** "
+            f"mit **{top_protein['Protein']} g Protein**"
+        )
 
-    st.info(
-        f"Kalorienreichste Mahlzeit: **{top_calories['Name']}** "
-        f"mit **{top_calories['Kalorien']} kcal**"
-    )
+        st.info(
+            f"Kalorienreichste Mahlzeit: **{top_calories['Name']}** "
+            f"mit **{top_calories['Kalorien']} kcal**"
+        )
 else:
     st.info("Noch keine Ernährungsdaten vorhanden.")
 
@@ -184,7 +174,6 @@ st.subheader("🏋️ Trainingsanalyse")
 
 if not progress_df.empty and "completed" in progress_df.columns:
     df_train = progress_df.copy()
-
     df_train["completed"] = df_train["completed"].astype(bool)
 
     erledigt_df = df_train[df_train["completed"] == True].copy()
@@ -196,24 +185,23 @@ if not progress_df.empty and "completed" in progress_df.columns:
     col3.metric("❌ Nicht erledigt", len(df_train) - len(erledigt_df))
 
     if not erledigt_df.empty:
-        erledigt_df["timestamp"] = pd.to_datetime(
-            erledigt_df["timestamp"],
-            errors="coerce"
-        )
+        if "timestamp" in erledigt_df.columns:
+            erledigt_df["timestamp"] = pd.to_datetime(
+                erledigt_df["timestamp"],
+                errors="coerce"
+            )
+            erledigt_df = erledigt_df.dropna(subset=["timestamp"])
+            erledigt_df["Datum"] = erledigt_df["timestamp"].dt.date
 
-        erledigt_df = erledigt_df.dropna(subset=["timestamp"])
-        erledigt_df["Datum"] = erledigt_df["timestamp"].dt.date
-
-        # Diagramm 1: Erledigte Trainings pro Datum
         st.subheader("📈 Trainingsfortschritt")
 
-        training_chart = (
-            erledigt_df.groupby("Datum")
-            .size()
-            .reset_index(name="Erledigte Trainings")
-        )
+        if "Datum" in erledigt_df.columns:
+            training_chart = (
+                erledigt_df.groupby("Datum")
+                .size()
+                .reset_index(name="Erledigte Trainings")
+            )
 
-        if len(training_chart) >= 1:
             st.line_chart(
                 training_chart,
                 x="Datum",
@@ -222,9 +210,8 @@ if not progress_df.empty and "completed" in progress_df.columns:
 
             st.caption("X-Achse = Datum, Y-Achse = Anzahl erledigte Trainings pro Tag.")
         else:
-            st.info("Noch nicht genug Trainingsdaten für ein Diagramm vorhanden.")
+            st.info("Für das Diagramm fehlt eine Datums-Spalte.")
 
-        # Diagramm 2: Wochenziel-Fortschritt
         st.subheader("🎯 Wochenziel-Fortschritt")
 
         if not profile_df.empty:
@@ -233,10 +220,14 @@ if not progress_df.empty and "completed" in progress_df.columns:
             geplante_trainings = 3
 
         erledigte_trainings = len(erledigt_df)
-        wochenfortschritt = min(
-            round((erledigte_trainings / geplante_trainings) * 100),
-            100
-        )
+
+        if geplante_trainings > 0:
+            wochenfortschritt = min(
+                round((erledigte_trainings / geplante_trainings) * 100),
+                100
+            )
+        else:
+            wochenfortschritt = 0
 
         col_w1, col_w2, col_w3 = st.columns(3)
         col_w1.metric("Geplante Trainings", geplante_trainings)
@@ -256,10 +247,13 @@ if not progress_df.empty and "completed" in progress_df.columns:
 
         display_df = erledigt_df.tail(5).copy()
 
-        display_df["Datum"] = pd.to_datetime(
-            display_df["timestamp"],
-            errors="coerce"
-        ).dt.strftime("%d.%m.%Y %H:%M")
+        if "timestamp" in display_df.columns:
+            display_df["Datum"] = pd.to_datetime(
+                display_df["timestamp"],
+                errors="coerce"
+            ).dt.strftime("%d.%m.%Y %H:%M")
+        else:
+            display_df["Datum"] = "Keine Angabe"
 
         display_df = display_df.rename(columns={
             "goal": "Ziel",
@@ -269,10 +263,11 @@ if not progress_df.empty and "completed" in progress_df.columns:
             "completed": "Erledigt"
         })
 
-        display_df["Erledigt"] = display_df["Erledigt"].map({
-            True: "Ja",
-            False: "Nein"
-        })
+        if "Erledigt" in display_df.columns:
+            display_df["Erledigt"] = display_df["Erledigt"].map({
+                True: "Ja",
+                False: "Nein"
+            })
 
         sichtbare_spalten = [
             "Datum",
@@ -283,11 +278,16 @@ if not progress_df.empty and "completed" in progress_df.columns:
             "Erledigt"
         ]
 
-        display_df = display_df[
-            [col for col in sichtbare_spalten if col in display_df.columns]
+        vorhandene_spalten = [
+            col for col in sichtbare_spalten
+            if col in display_df.columns
         ]
 
-        st.dataframe(display_df, use_container_width=True)
+        st.dataframe(display_df[vorhandene_spalten], use_container_width=True)
+
+    else:
+        st.info("Noch keine erledigten Trainings vorhanden.")
+
 else:
     st.info("Noch keine Trainingsdaten vorhanden.")
 
