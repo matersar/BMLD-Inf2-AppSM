@@ -196,34 +196,61 @@ if not progress_df.empty and "completed" in progress_df.columns:
     col3.metric("❌ Nicht erledigt", len(df_train) - len(erledigt_df))
 
     if not erledigt_df.empty:
-        erledigt_df["Training"] = range(1, len(erledigt_df) + 1)
-        erledigt_df["Kumulierte Trainings"] = range(1, len(erledigt_df) + 1)
-
-        if len(erledigt_df) >= 2:
-            st.subheader("📈 Trainingsfortschritt")
-
-            training_chart = erledigt_df[["Training", "Kumulierte Trainings"]]
-
-            st.line_chart(
-                training_chart,
-                x="Training",
-                y="Kumulierte Trainings"
-            )
-
-            st.caption("X-Achse = absolvierte Trainings in Reihenfolge.")
-        else:
-            st.info("Für eine Trainingslinie brauchst du mindestens 2 erledigte Trainings.")
-
-        st.subheader("🎯 Trainings nach Ziel")
-
-        ziel_chart = (
-            erledigt_df.groupby("goal")
-            .size()
-            .reset_index(name="Anzahl")
-            .rename(columns={"goal": "Ziel"})
+        erledigt_df["timestamp"] = pd.to_datetime(
+            erledigt_df["timestamp"],
+            errors="coerce"
         )
 
-        st.bar_chart(ziel_chart, x="Ziel", y="Anzahl")
+        erledigt_df = erledigt_df.dropna(subset=["timestamp"])
+        erledigt_df["Datum"] = erledigt_df["timestamp"].dt.date
+
+        # Diagramm 1: Erledigte Trainings pro Datum
+        st.subheader("📈 Trainingsfortschritt")
+
+        training_chart = (
+            erledigt_df.groupby("Datum")
+            .size()
+            .reset_index(name="Erledigte Trainings")
+        )
+
+        if len(training_chart) >= 1:
+            st.line_chart(
+                training_chart,
+                x="Datum",
+                y="Erledigte Trainings"
+            )
+
+            st.caption("X-Achse = Datum, Y-Achse = Anzahl erledigte Trainings pro Tag.")
+        else:
+            st.info("Noch nicht genug Trainingsdaten für ein Diagramm vorhanden.")
+
+        # Diagramm 2: Wochenziel-Fortschritt
+        st.subheader("🎯 Wochenziel-Fortschritt")
+
+        if not profile_df.empty:
+            geplante_trainings = int(profile_df.iloc[-1].get("Trainingstage", 3))
+        else:
+            geplante_trainings = 3
+
+        erledigte_trainings = len(erledigt_df)
+        wochenfortschritt = min(
+            round((erledigte_trainings / geplante_trainings) * 100),
+            100
+        )
+
+        col_w1, col_w2, col_w3 = st.columns(3)
+        col_w1.metric("Geplante Trainings", geplante_trainings)
+        col_w2.metric("Erledigte Trainings", erledigte_trainings)
+        col_w3.metric("Wochenziel", f"{wochenfortschritt}%")
+
+        st.progress(wochenfortschritt / 100)
+
+        if wochenfortschritt >= 100:
+            st.success("Wochenziel erreicht! 🎉")
+        elif wochenfortschritt >= 50:
+            st.info("Du bist gut unterwegs. Mach weiter so!")
+        else:
+            st.warning("Du hast dein Wochenziel noch nicht erreicht.")
 
         st.subheader("📋 Letzte Trainings")
 
@@ -243,12 +270,24 @@ if not progress_df.empty and "completed" in progress_df.columns:
 
         display_df["Erledigt"] = display_df["Erledigt"].map({True: "Ja", False: "Nein"})
 
-        sichtbare_spalten = ["Datum", "Ziel", "Fitnesslevel", "Trainingstage", "Trainingstag", "Erledigt"]
-        display_df = display_df[[col for col in sichtbare_spalten if col in display_df.columns]]
+        sichtbare_spalten = [
+            "Datum",
+            "Ziel",
+            "Fitnesslevel",
+            "Trainingstage",
+            "Trainingstag",
+            "Erledigt"
+        ]
+
+        display_df = display_df[
+            [col for col in sichtbare_spalten if col in display_df.columns]
+        ]
 
         st.dataframe(display_df, use_container_width=True)
+
     else:
         st.info("Noch keine erledigten Trainings vorhanden.")
+
 else:
     st.info("Noch keine Trainingsdaten vorhanden.")
 
