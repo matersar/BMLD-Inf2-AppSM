@@ -729,3 +729,32 @@ for tag, muskelgruppen in trainingsplan.items():
                     st.caption(
                         "Anfänger und Mittelstufe erhalten 3 Übungen pro Körperteil."
                     )
+                # =========================
+                # KALORIENVERBRAUCH
+                # =========================
+
+                if ziel == "Abnehmen":
+
+                    if level == "Anfänger":
+                        kcal_pro_training = 200
+
+                    elif level == "Mittelstufe":
+                        kcal_pro_training = 300
+
+                    else:
+                        kcal_pro_training = 400
+
+                    kcal_verbrauch = trainingstage_anzahl * kcal_pro_training
+
+                    st.divider()
+
+                    st.subheader("🔥 Geschätzter Kalorienverbrauch")
+
+                    st.metric(
+                        "Kalorienverbrauch pro Woche",
+                        f"{kcal_verbrauch} kcal"
+                    )
+
+                    st.info(
+                        "Der Kalorienverbrauch ist eine grobe Schätzung und hängt von Intensität, Körpergewicht und Trainingsdauer ab."
+                    )
