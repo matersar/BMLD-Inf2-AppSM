@@ -668,6 +668,7 @@ def passende_uebungen_finden(muskelgruppe, level, trainingsort):
 
 saetze_empfohlen, wiederholungen_empfohlen, intensitaet = trainingsumfang(level, ziel)
 
+kcal_woche = 0
 
 for tag, muskelgruppen in trainingsplan.items():
 
@@ -680,10 +681,21 @@ for tag, muskelgruppen in trainingsplan.items():
                 st.markdown("### Cardio / Bewegung")
                 st.info(cardio_empfehlung(level))
 
+                if level == "Anfänger":
+                    kcal_cardio = 180
+
+                elif level == "Mittelstufe":
+                    kcal_cardio = 300
+
+                else:
+                    kcal_cardio = 450
+
+                kcal_woche += kcal_cardio
+
             else:
                 st.write("Ruhetag / Erholung")
 
-        continue
+            continue
 
     with st.expander(f"{tag}"):
 
@@ -708,6 +720,14 @@ for tag, muskelgruppen in trainingsplan.items():
                 for ex in passende_uebungen:
 
                     info = EXERCISE_INFO.get(ex["name"])
+
+                    kcal_uebung = kcal_uebung_schaetzen(
+                        ex["name"],
+                        level,
+                        saetze_empfohlen
+                    )
+
+                    kcal_woche += kcal_uebung
 
                     if trainingsort == "Gym":
 
@@ -797,22 +817,15 @@ for tag, muskelgruppen in trainingsplan.items():
 
 if ziel == "Abnehmen":
 
-    if level == "Anfänger":
-        kcal_pro_training = 200
+    st.divider()
 
-    elif level == "Mittelstufe":
-        kcal_pro_training = 300
-
-    else:
-        kcal_pro_training = 400
-
-    kcal_verbrauch = trainingstage_anzahl * kcal_pro_training
+    st.subheader("🔥 Geschätzter Kalorienverbrauch")
 
     st.metric(
-        "🔥 Geschätzter Kalorienverbrauch pro Woche",
-        f"{kcal_verbrauch} kcal"
+        "Kalorienverbrauch pro Woche",
+        f"{kcal_woche} kcal"
     )
 
     st.info(
-        "Der Kalorienverbrauch ist eine grobe Schätzung und hängt von Intensität, Körpergewicht und Trainingsdauer ab."
-    )            
+        "Der Kalorienverbrauch ist eine grobe Schätzung basierend auf Übungen, Trainingslevel, Trainingsumfang und Cardio."
+    )     
