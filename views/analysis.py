@@ -254,8 +254,14 @@ if not progress_df.empty and "completed" in progress_df.columns:
 
         st.subheader("📋 Letzte Trainings")
 
-        display_df = erledigt_df.tail(5).rename(columns={
-            "timestamp": "Datum",
+        display_df = erledigt_df.tail(5).copy()
+
+        display_df["Datum"] = pd.to_datetime(
+            display_df["timestamp"],
+            errors="coerce"
+        ).dt.strftime("%d.%m.%Y %H:%M")
+
+        display_df = display_df.rename(columns={
             "goal": "Ziel",
             "level": "Fitnesslevel",
             "training_days": "Trainingstage",
@@ -263,14 +269,10 @@ if not progress_df.empty and "completed" in progress_df.columns:
             "completed": "Erledigt"
         })
 
-        display_df = display_df.loc[:, ~display_df.columns.duplicated()]
-
-        display_df["Datum"] = pd.to_datetime(
-            display_df["Datum"],
-            errors="coerce"
-        ).dt.strftime("%d.%m.%Y %H:%M")
-
-        display_df["Erledigt"] = display_df["Erledigt"].map({True: "Ja", False: "Nein"})
+        display_df["Erledigt"] = display_df["Erledigt"].map({
+            True: "Ja",
+            False: "Nein"
+        })
 
         sichtbare_spalten = [
             "Datum",
@@ -286,10 +288,6 @@ if not progress_df.empty and "completed" in progress_df.columns:
         ]
 
         st.dataframe(display_df, use_container_width=True)
-
-    else:
-        st.info("Noch keine erledigten Trainings vorhanden.")
-
 else:
     st.info("Noch keine Trainingsdaten vorhanden.")
 
