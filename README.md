@@ -70,6 +70,7 @@ Die App unterstützt Benutzer:innen dabei, ihre persönlichen Fitness- und Ernä
 
 ### 📊 Analyse
 
+- Transparente Darstellung der verwendeten Berechnungen und Zielwerte
 - Auswertung gespeicherter Ernährungsdaten
 - Durchschnittliche Kalorien- und Proteinwerte
 - Trainingsanalyse
@@ -80,11 +81,11 @@ Die App unterstützt Benutzer:innen dabei, ihre persönlichen Fitness- und Ernä
 
 ### 🏠 Dashboard
 
-- Zentrale Übersicht aller wichtigen Daten
-- Profilübersicht
-- Ernährungsübersicht
-- Trainingsübersicht
-- Motivation und Fortschrittsanzeige
+- Persönliche Begrüssung für den Benutzer
+- Übersichtliche Einführung in die App und ihre Funktionen
+- Erklärung der wichtigsten Bereiche wie Profil, Ernährung, Training, Analyse und Motivation
+- Schnellübersicht über persönliche Ziele, absolvierte Trainings und gespeicherte Mahlzeiten
+- Zentrale Startseite für einen schnellen Überblick über die wichtigsten Informationen
 
 ---
 
