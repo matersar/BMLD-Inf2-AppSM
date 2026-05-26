@@ -1,6 +1,6 @@
-#Reflexion – FitPlan App
+# Reflexion – FitPlan App
 
-##Projektidee
+## Projektidee
 
 Unser Ziel war es, eine interaktive Fitness- und Ernährungs-App zu entwickeln, welche Training, Ernährung und Fortschrittsanalyse in einer Anwendung kombiniert.
 
@@ -15,13 +15,13 @@ Dabei wollten wir nicht nur einfache Berechnungen anzeigen, sondern eine moderne
 
 Zusätzlich war es uns wichtig, die Anwendung möglichst anfängerfreundlich zu gestalten. Deshalb legten wir grossen Wert auf verständliche Trainingspläne, klare Strukturen und einfache Bedienung.
 
-##Umsetzung der App
+## Umsetzung der App
 
 Die Anwendung wurde mit Python und Streamlit umgesetzt. Zusätzlich nutzten wir pandas für die Datenanalyse und CSV-Dateien zur Speicherung der Benutzerdaten.
 
 Die App besteht aus mehreren Bereichen:
 
-###Dashboard
+### Dashboard
 
 Das Dashboard dient als zentrale Startseite der App und bietet einen schnellen Überblick über die wichtigsten Funktionen.
 
@@ -32,7 +32,7 @@ eine kurze Einführung in die App,
 eine Übersicht der wichtigsten Bereiche,
 sowie eine Schnellübersicht über Ziele, Trainings und Mahlzeiten.
 
-###Nährwertrechner 
+### Nährwertrechner 
 
 Im Nährwertrechner können Benutzer:innen Mahlzeiten eingeben und die Nährwerte automatisch berechnen lassen.
 
@@ -51,7 +51,7 @@ Die App erstellt ausserdem persönliche Tagesziele basierend auf Gewicht, Ziel u
 
 Zusätzlich wurde die Verbindung zwischen Ernährung und Training erweitert. Die Anwendung analysiert automatisch, ob Protein- und Kalorienwerte zum gewählten Trainingsziel passen und gibt entsprechende Rückmeldungen und Empfehlungen.
 
-###Trainingsplan
+### Trainingsplan
 
 Im Trainingsbereich kann ein individueller Trainingsplan erstellt werden.
 
@@ -78,7 +78,7 @@ Dadurch können Benutzer:innen die Übungen besser verstehen und korrekt ausfüh
 
 Ausserdem wurden die Trainingspläne realistischer gestaltet, indem unterschiedliche Intensitäten, Trainingsumfänge und Gewichtsempfehlungen berücksichtigt werden, je nach Fitnesslevel.
 
-###Analyse
+### Analyse
 
 Die Analyse-Seite wertet die gespeicherten Daten aus und zeigt:
 
@@ -89,7 +89,19 @@ sowie automatische Empfehlungen.
 
 Dadurch können Benutzer:innen ihre Entwicklung besser nachvollziehen.
 
-##Herausforderungen und Probleme
+### Help & Support
+
+Zusätzlich wurde ein Help-&-Support-Bereich integriert.
+
+Dieser enthält:
+
+einen FAQ-Bereich,
+Erklärungen zu den wichtigsten Funktionen,
+sowie ein Feedbackformular für Benutzer:innen.
+
+Dadurch erhalten insbesondere neue Benutzer:innen eine Unterstützung beim Einstieg in die App und können bei Fragen oder Verbesserungsvorschlägen direkt Rückmeldung geben.
+
+## Herausforderungen und Probleme
 
 Während der Entwicklung traten verschiedene Probleme auf.
 
@@ -109,7 +121,7 @@ Durch Debugging und schrittweises Testen konnten wir diese Probleme jedoch löse
 
 Eine weitere Herausforderung war die Erstellung und Auswahl der Übungsbilder. Da alle Übungsbilder mithilfe von KI generiert wurden, mussten die Beschreibungen sehr präzise formuliert werden. Häufig unterschieden sich Körperhaltung, Farben, Hintergrund oder Bildaufbau zwischen den einzelnen Bildern, obwohl dieselbe Übung dargestellt werden sollte. Deshalb waren mehrere Anpassungen und Überarbeitungen notwendig, bis ein einheitlicher und verständlicher Stil erreicht werden konnte.
 
-##Technische Entscheidungen
+## Technische Entscheidungen
 
 Wir entschieden uns bewusst für Streamlit, weil damit schnell interaktive Anwendungen entwickelt werden können.
 
@@ -123,7 +135,7 @@ Die Aufteilung in mehrere Seiten war ebenfalls eine wichtige Entscheidung, damit
 
 Zusätzlich entschieden wir uns für eine strukturierte Übungsdatenbank mit Bildern, Beschreibungen und Tipps, damit die Trainingsansicht dynamisch erweitert werden kann.
 
-##Zusammenarbeit im Team
+## Zusammenarbeit im Team
 
 Die Arbeit im Team funktionierte insgesamt gut.
 
@@ -141,7 +153,7 @@ oder Gestaltung der Übungsbilder.
 
 Dadurch konnten wir effizienter arbeiten.
 
-##Was wir gelernt haben
+## Was wir gelernt haben
 
 Durch dieses Projekt konnten wir unser Wissen in Python deutlich erweitern.
 
@@ -165,7 +177,7 @@ Verbesserungsmöglichkeiten
 
 In Zukunft könnte die App noch erweitert werden.
 
-##Mögliche Verbesserungen wären:
+## Mögliche Verbesserungen wären:
 
 Login-System mit Benutzerkonten,
 echte Datenbank statt CSV-Dateien,
@@ -177,7 +189,7 @@ oder Trainingsvideos zu Übungen.
 
 Auch die Benutzeroberfläche könnte zukünftig weiter optimiert und für mobile Geräte erweitert werden.
 
-##Fazit
+## Fazit
 
 Insgesamt war das Projekt eine sehr wertvolle Erfahrung.
 
