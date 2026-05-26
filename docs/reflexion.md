@@ -27,10 +27,10 @@ Das Dashboard dient als zentrale Startseite der App und bietet einen schnellen �
 
 Es enthält:
 
-eine persönliche Begrüssung,
-eine kurze Einführung in die App,
-eine Übersicht der wichtigsten Bereiche,
-sowie eine Schnellübersicht über Ziele, Trainings und Mahlzeiten.
+- eine persönliche Begrüssung,
+- eine kurze Einführung in die App,
+- eine Übersicht der wichtigsten Bereiche,
+- sowie eine Schnellübersicht über Ziele, Trainings und Mahlzeiten.
 
 ### Nährwertrechner 
 
@@ -38,12 +38,12 @@ Im Nährwertrechner können Benutzer:innen Mahlzeiten eingeben und die Nährwert
 
 Zusätzlich werden:
 
-Kalorien,
-Protein,
-Fett,
-Zucker,
-Kohlenhydrate,
-und Ballaststoffe
+- Kalorien,
+- Protein,
+- Fett,
+- Zucker,
+- Kohlenhydrate,
+- und Ballaststoffe
 
 analysiert und bewertet.
 
@@ -56,13 +56,10 @@ Zusätzlich wurde die Verbindung zwischen Ernährung und Training erweitert. Die
 Im Trainingsbereich kann ein individueller Trainingsplan erstellt werden.
 
 Die Trainingspläne passen sich an:
-
 Fitnesslevel,
 Ziel,
 Anzahl Trainingstage,
-und Trainingsort
-
-an.
+und Trainingsort an.
 
 Benutzer:innen können auswählen, ob sie zuhause oder im Gym trainieren möchten. Dadurch werden automatisch passende Übungen angezeigt.
 
@@ -81,20 +78,14 @@ Ausserdem wurden die Trainingspläne realistischer gestaltet, indem unterschiedl
 ### Analyse
 
 Die Analyse-Seite wertet die gespeicherten Daten aus und zeigt:
-
-Diagramme,
-Durchschnittswerte,
-Protein- und Kalorienanalysen,
-sowie automatische Empfehlungen.
+Diagramme, Durchschnittswerte, Protein- und Kalorienanalysen, sowie automatische Empfehlungen.
 
 Dadurch können Benutzer:innen ihre Entwicklung besser nachvollziehen.
 
 ### Help & Support
 
 Zusätzlich wurde ein Help-&-Support-Bereich integriert.
-
 Dieser enthält:
-
 einen FAQ-Bereich,
 Erklärungen zu den wichtigsten Funktionen,
 sowie ein Feedbackformular für Benutzer:innen.
@@ -103,7 +94,7 @@ Dadurch erhalten insbesondere neue Benutzer:innen eine Unterstützung beim Einst
 
 ## Herausforderungen und Probleme
 
-Während der Entwicklung traten verschiedene Probleme auf.
+Während der Entwicklung traten verschiedene Probleme auf:
 
 Ein grösseres Problem war die Speicherung der Daten. Anfangs wurden CSV-Dateien teilweise leer gespeichert oder nicht korrekt geladen. Wir mussten deshalb unsere DataManager- und ProgressManager-Klassen mehrfach anpassen.
 
@@ -144,13 +135,7 @@ Wir tauschten Ideen aus, testeten Funktionen gegenseitig und halfen uns bei Prob
 Auch Nutzerfeedback spielte eine wichtige Rolle. Nach ersten Rückmeldungen erweiterten wir die App um Übungsbilder, Erklärungen und eine bessere Auswahl zwischen Home- und Gym-Training.
 
 Die Aufgaben wurden untereinander verteilt, beispielsweise:
-
-Dashboard,
-Trainingsbereich,
-Dokumentation,
-Analysefunktionen,
-oder Gestaltung der Übungsbilder.
-
+Dashboard, Trainingsbereich, Dokumentation, Analysefunktionen oder Gestaltung der Übungsbilder.
 Dadurch konnten wir effizienter arbeiten.
 
 ## Was wir gelernt haben
