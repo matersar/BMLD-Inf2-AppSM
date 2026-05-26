@@ -5,6 +5,7 @@ from utils.exercise_data import EXERCISES
 from utils.exercise_info import EXERCISE_INFO
 from utils.progress_manager import ProgressManager
 from utils.data_manager import DataManager
+from datetime import datetime
 
 st.title("🏋️ Trainingsplan")
 
@@ -208,16 +209,57 @@ trainingstage = {
 if "checkbox_states" not in st.session_state:
     st.session_state["checkbox_states"] = {}
 
-st.subheader("Fortschritt diese Woche")
+heute = datetime.now()
+iso_jahr, iso_woche, _ = heute.isocalendar()
+aktuelle_woche_id = f"{iso_jahr}-W{iso_woche}"
+
+st.subheader(f"Fortschritt diese Woche ({aktuelle_woche_id})")
+
+try:
+    gespeicherter_fortschritt = progress_manager.load_progress()
+except Exception:
+    gespeicherter_fortschritt = pd.DataFrame(columns=[
+        "timestamp", "goal", "level", "training_days", "day_name", "completed"
+    ])
+
+aktuelle_woche_df = pd.DataFrame()
+
+if not gespeicherter_fortschritt.empty and "timestamp" in gespeicherter_fortschritt.columns:
+    gespeicherter_fortschritt["timestamp"] = pd.to_datetime(
+        gespeicherter_fortschritt["timestamp"],
+        errors="coerce"
+    )
+
+    gespeicherter_fortschritt = gespeicherter_fortschritt.dropna(subset=["timestamp"])
+
+    kalenderdaten = gespeicherter_fortschritt["timestamp"].dt.isocalendar()
+
+    aktuelle_woche_df = gespeicherter_fortschritt[
+        (kalenderdaten["year"] == iso_jahr)
+        & (kalenderdaten["week"] == iso_woche)
+    ].copy()
 
 current_keys = []
 
 for tag in trainingstage:
-    key = f"{ziel}_{level}_{trainingstage_anzahl}_{trainingsort}_{tag}"
+    key = f"{aktuelle_woche_id}_{ziel}_{level}_{trainingstage_anzahl}_{trainingsort}_{tag}"
     current_keys.append(key)
 
+    bereits_erledigt = False
+
+    if not aktuelle_woche_df.empty:
+        passende_eintraege = aktuelle_woche_df[
+            (aktuelle_woche_df["goal"] == ziel)
+            & (aktuelle_woche_df["level"] == level)
+            & (aktuelle_woche_df["training_days"] == trainingstage_anzahl)
+            & (aktuelle_woche_df["day_name"] == tag)
+            & (aktuelle_woche_df["completed"] == True)
+        ]
+
+        bereits_erledigt = not passende_eintraege.empty
+
     if key not in st.session_state["checkbox_states"]:
-        st.session_state["checkbox_states"][key] = False
+        st.session_state["checkbox_states"][key] = bereits_erledigt
 
     st.session_state["checkbox_states"][key] = st.checkbox(
         f"{tag} erledigt",
@@ -227,7 +269,7 @@ for tag in trainingstage:
 
 if st.button("💾 Fortschritt speichern"):
     for tag in trainingstage:
-        key = f"{ziel}_{level}_{trainingstage_anzahl}_{trainingsort}_{tag}"
+        key = f"{aktuelle_woche_id}_{ziel}_{level}_{trainingstage_anzahl}_{trainingsort}_{tag}"
         erledigt = st.session_state["checkbox_states"][key]
 
         progress_manager.update_day(
@@ -238,14 +280,18 @@ if st.button("💾 Fortschritt speichern"):
             erledigt
         )
 
-    st.success("Fortschritt gespeichert! ✅")
+    st.success("Fortschritt für diese Woche gespeichert! ✅")
 
-erledigt_count = sum(1 for key in current_keys if st.session_state["checkbox_states"][key])
+erledigt_count = sum(
+    1 for key in current_keys
+    if st.session_state["checkbox_states"][key]
+)
+
 gesamt = len(trainingstage)
 prozent = round((erledigt_count / gesamt) * 100) if gesamt > 0 else 0
 
 st.progress(erledigt_count / gesamt if gesamt > 0 else 0)
-st.write(f"Du hast **{erledigt_count} von {gesamt} Trainingstagen** geschafft.")
+st.write(f"Du hast **{erledigt_count} von {gesamt} Trainingstagen** diese Woche geschafft.")
 st.metric("📈 Wochenfortschritt", f"{prozent}%")
 
 st.divider()
