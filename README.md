@@ -8,9 +8,10 @@ Die App unterstützt Benutzer:innen dabei, ihre persönlichen Fitness- und Ernä
 
 ---
 
+
 ## 🌐 Streamlit App
 
-[Zur Streamlit App](https://bmld-inf2-appsm-jxzz7pmeirrag6tclp7xhu.streamlit.app/)
+[FitPlan App öffnen](https://fitplan-app.streamlit.app/)
 
 ---
 
