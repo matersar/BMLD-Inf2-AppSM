@@ -22,14 +22,16 @@ Die App besteht aus mehreren Bereichen:
 
 Dashboard
 
-Das Dashboard zeigt die wichtigsten Informationen auf einen Blick:
+Das Dashboard dient als zentrale Startseite der App und bietet einen schnellen Überblick über die wichtigsten Funktionen.
 
-Profilübersicht
-BMI
-Trainingsfortschritt
-Ernährungsübersicht
-Motivation und Zusammenfassungen
-Nährwertrechner
+Es enthält:
+
+eine persönliche Begrüssung,
+eine kurze Einführung in die App,
+eine Übersicht der wichtigsten Bereiche,
+sowie eine Schnellübersicht über Ziele, Trainings und Mahlzeiten.
+
+Nährwertrechner 
 
 Im Nährwertrechner können Benutzer:innen Mahlzeiten eingeben und die Nährwerte automatisch berechnen lassen.
 
@@ -73,7 +75,7 @@ sowie Tipps zur korrekten Ausführung.
 
 Dadurch können Benutzer:innen die Übungen besser verstehen und korrekt ausführen.
 
-Ausserdem wurden die Trainingspläne realistischer gestaltet, indem unterschiedliche Intensitäten, Trainingsumfänge und Gewichtsempfehlungen berücksichtigt werden.
+Ausserdem wurden die Trainingspläne realistischer gestaltet, indem unterschiedliche Intensitäten, Trainingsumfänge und Gewichtsempfehlungen berücksichtigt werden, je nach Fitnesslevel.
 
 Analyse
 
@@ -103,6 +105,8 @@ Bildpfaden und Dateistrukturen,
 sowie Fehlern beim Deployment auf Streamlit Cloud.
 
 Durch Debugging und schrittweises Testen konnten wir diese Probleme jedoch lösen.
+
+Eine weitere Herausforderung war die Erstellung und Auswahl der Übungsbilder. Da alle Übungsbilder mithilfe von KI generiert wurden, mussten die Beschreibungen sehr präzise formuliert werden. Häufig unterschieden sich Körperhaltung, Farben, Hintergrund oder Bildaufbau zwischen den einzelnen Bildern, obwohl dieselbe Übung dargestellt werden sollte. Deshalb waren mehrere Anpassungen und Überarbeitungen notwendig, bis ein einheitlicher und verständlicher Stil erreicht werden konnte.
 
 Technische Entscheidungen
 
