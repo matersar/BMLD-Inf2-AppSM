@@ -29,8 +29,8 @@ EXERCISES = [
 
     # Home
     {"name": "Trizeps Dips am Stuhl", "muskelgruppe": "Arme", "level": "Anfänger", "ort": "Home"},
-    {"name": "Enge Liegestuetze", "muskelgruppe": "Arme", "level": "Mittelstufe", "ort": "Home"},
-    {"name": "Diamond Push Ups", "muskelgruppe": "Arme", "level": "Fortgeschritten", "ort": "Home"},
+    {"name": "Enge Liegestütze", "muskelgruppe": "Arme", "level": "Mittelstufe", "ort": "Home"},
+    {"name": "Diamond Push-ups", "muskelgruppe": "Arme", "level": "Fortgeschritten", "ort": "Home"},
 
     # =====================
     # BEINE
