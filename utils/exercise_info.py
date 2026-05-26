@@ -81,7 +81,7 @@ EXERCISE_INFO = {
 
     # Arme - Home
     "Enge Liegestuetze": {
-        "bild": "images/Enge Liegestütze.png",
+        "bild": "images/Enge Liegestuetze.png",
         "beschreibung": "Führe Liegestütze mit enger Handposition aus. Dadurch wird der Trizeps stärker belastet.",
         "tipp": "Körper gerade halten und Ellbogen nah am Körper führen."
     },
@@ -99,7 +99,7 @@ EXERCISE_INFO = {
     },
 
     "Diamond Push Ups": {
-        "bild": "images/Diamond Push-ups.png",
+        "bild": "images/Diamond Push Ups.png",
         "beschreibung": "Führe Liegestütze mit enger Diamant-Handposition aus. Der Trizeps wird stark aktiviert.",
         "tipp": "Ellbogen nah am Körper halten und die Körperspannung nicht verlieren."
     },
