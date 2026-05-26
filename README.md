@@ -14,6 +14,17 @@ Die App unterstützt Benutzer:innen dabei, ihre persönlichen Fitness- und Ernä
 
 ---
 
+## 📖 Nutzung der App
+
+1. Profil ausfüllen
+2. Trainingsziel, Fitnesslevel und Trainingstage festlegen
+3. Trainingsplan nutzen und Fortschritte speichern
+4. Mahlzeiten im Nährwertrechner erfassen
+5. Ernährungs- und Trainingsdaten analysieren
+6. Fortschritte und Ziele verfolgen
+
+---
+
 ## 🚀 Hauptfunktionen
 
 ### 👤 Persönliches Profil
@@ -30,7 +41,7 @@ Die App unterstützt Benutzer:innen dabei, ihre persönlichen Fitness- und Ernä
 
 - Berechnung von Kalorien und Makronährstoffen pro Portion
 - Protein-, Fett-, Kohlenhydrat-, Zucker- und Ballaststoffanalyse
-- Persönliche Tagesziele für Kalorien, Protein und Wasser
+- Persönliche Tagesziele für Kalorien, Protein und Wasser werden anhand von Gewicht, Trainingstagen und Trainingsziel berechnet
 - Bewertung der Mahlzeiten passend zum Trainingsziel
 - Speicherung von Mahlzeiten
 - CSV Export der gespeicherten Daten
@@ -51,7 +62,9 @@ Die App unterstützt Benutzer:innen dabei, ihre persönlichen Fitness- und Ernä
 - Übungen mit visuellen Anleitungen
 - Start- und Endpositionen der Übungen
 - Anatomische Muskelmarkierungen
-- Home- und Gym-Übungen
+- Home- und Gym-Modus mit automatisch angepassten Übungen
+- Individuelle Gewichtsempfehlungen für Gym-Übungen
+- Bewertung der Trainingsgewichte (zu leicht, passend oder zu schwer) mit Anpassungsempfehlungen
 
 ---
 
